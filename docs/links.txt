@@ -1,0 +1,4 @@
+Slip Printing
+-------------
+https://dev.to/rubenruvalcabac/printing-tickets-on-reactjs-ki6
+https://reference.epson-biz.com/modules/ref_epos_sdk_js_en/index.php?content_id=1#BHIDAHEE

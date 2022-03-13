@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+  //output = "../prisma/generated/type-graphql"
+  emitTranspiledCode = true
+}
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE")
+}
+
+model shop {
+  id String @id @default(cuid())
+  name String  @db.VarChar(255)
+  sale_records saleRecord[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@map("ticket_stations")
+}
+
+model item {
+  id String @id @default(cuid())
+  name String  @db.VarChar(255)
+  description String @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@map("items")
+}
+
+model installmentRecord {
+  id String @id @default(cuid())
+  customer saleRecord? @relation("SaleRecord", fields: [customer_id], references: [id]) 
+  customer_id String?
+  user User? @relation("OperatoeUser", fields: [user_id], references: [id])
+  user_id String
+
+  particular String?
+  qty Int
+  price Int
+  amount Int
+  net_amount Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@map("installment_records")
+}
+
+model saleRecord {
+  id String @id @default(cuid())
+  voucher_no String @db.VarChar(255)
+  customer String @db.VarChar(255)
+  address String? @db.VarChar(255)
+  give_amount Int?
+  total_amount Int
+  net_amount Int?
+  particular String?
+  qty Int?
+  shop shop @relation(fields: [shop_id], references: [id])
+  shop_id String
+  product_status ProductStatus @default(BEFORE)
+  user User? @relation("User", fields: [user_id], references: [id])
+  user_id String?
+  user_name String?
+  metadata String? @db.VarChar(1024)
+  installment_amount Int?
+  installment_records installmentRecord[]@relation("SaleRecord")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  installment_at DateTime?
+  @@map("sale_records")
+}
+
+model User {
+  id String @id @default(cuid())
+  name String @unique @db.VarChar(255)
+  password String @db.VarChar(64)
+  profile_picture String? @db.VarChar(512)
+  token_version Int @default(0)
+  active Boolean @default(true)
+  role Role @default(ADMIN)
+  
+  installments_records installmentRecord[] @relation("OperatoeUser")
+  sale_records saleRecord[] @relation("User")
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@map("users")
+}
+
+model SystemData{
+  id String @id @default(cuid())
+  code String  @db.VarChar(128) @unique
+  description String?  @db.VarChar(128)
+  value String?  @db.VarChar(255)
+  metadata String?  @db.VarChar(1024)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@map("system_data")
+}
+
+
+enum Role {
+  ADMIN
+  SUPERVISOR
+  ENTRY_OPERATOR
+  EXIT_OPERATOR
+}
+
+enum GateType {
+  ENTRY
+  EXIT
+}
+
+enum CardType{
+  QR
+  CARD
+}
+
+enum ProductStatus{
+  BEFORE
+  AFTER
+}

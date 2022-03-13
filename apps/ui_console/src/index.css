@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer utilities {
+  .input,
+  .textarea,
+  .select,
+  .btn {
+    @apply rounded-2xl;
+  }
+  .btn {
+    @apply normal-case;
+  }
+}
+
+@layer base {
+  .grid-btn-primary {
+    @apply bg-base-100 rounded-md pl-1 items-center border-[1px] border-gray-400 cursor-pointer hover:bg-base-200 hover:border-gray-800 w-8 h-8;
+  }
+
+  .grid-btn-secondary {
+    @apply bg-base-100 rounded-md pl-0 items-center border-[1px] border-gray-400 cursor-pointer hover:bg-accent hover:border-gray-800 w-8 h-8;
+  }
+
+  .grid-btn-important {
+    @apply bg-primary rounded-md px-1 items-center border-[1px] border-gray-400 cursor-pointer hover:bg-primary-focus hover:border-gray-800 w-8 h-8;
+  }
+
+  button.print {
+    @apply inline-flex justify-center content-center bg-gray-300 rounded shadow hover:bg-gray-400 
+    hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-700 focus-visible:ring-opacity-75
+    disabled:bg-gray-200 disabled:text-gray-500;
+  }
+
+  /* width */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    @apply rounded-full bg-base-300;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-base-200 rounded-full border-2 border-base-content;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-base-content;
+  }
+
+  @media print {
+    .hideonprint {
+      display: none;
+    }
+    @page {
+      size: A4;
+      margin: default;
+    }
+  }
+
+  .pin-field {
+    @apply bg-gray-50 border-[1px] border-gray-500 rounded-md text-gray-500 text-3xl h-14 w-12 m-1 outline-none text-center transition focus:border-gray-700 focus:transform focus:scale-105;
+  }
+
+  swd-pin-field[completed] .pin-field {
+    @apply border-gray-400 text-gray-600 bg-yellow-100;
+  }
+
+  .pincode-input-text {
+    @apply bg-gray-50 border-[1px] border-gray-500 rounded-md text-gray-500 text-2xl h-14 w-12 m-2 outline-none text-center  transition focus:border-gray-700 focus:transform focus:scale-105;
+  }
+  swd-pin-field[completed] .pincode-input-text {
+    @apply border-gray-400 text-gray-600 bg-yellow-100;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
