@@ -12,7 +12,7 @@ const Header = (props) => {
     <div className="relative w-full p-1 flex flex-row justify-between">
       <span className="text-2xl font-bold text-gray-700">&nbsp;</span>
       <span className="text-2xl font-bold text-gray-700">{constants.app_name}</span>
-      {auth.user && <span className="text-xl font-semibold text-red-700">{auth.user.user.user.name}</span>}
+      {auth.user && <span className="text-xl font-semibold text-red-700">{auth.user.name}</span>}
     </div>
   );
 };

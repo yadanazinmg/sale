@@ -1,122 +1,108 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
-import { useNavigate, useLocation } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import withUser from "../../hocs/with_user";
 import * as yup from "yup";
-import { create_sale } from "../../graphql/sale";
-import { get_system_data, update_system_data } from "../../graphql/system_data";
-import LoadingIndicator from "../../components/loading_indicator";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import paths from "../../routes/paths";
+import withUser from "../../hocs/with_user";
+import { get_sale_by_id, update_sale } from "../../graphql/sale";
+import { create_installment } from "../../graphql/installment";
+import { SalePrint } from "../../helpers/excel_helper";
 
 const formSchema = yup.object().shape({
   customer: yup.string().required("Gate Type is required."),
   total_amount: yup.number().required("Gate Type is required."),
 });
 
-const formData = {
-  voucher_no: "",
-  customer: "",
-  address: "",
-  give_amount: 0,
-  net_amount: 0,
-  product_status: null,
-  particular: "",
-};
-
-const CreateSalePage = (props) => {
-  const {
-    loading: gqlLoading,
-    error,
-    data: gates,
-    refetch,
-  } = useQuery(get_system_data, {
-    pollInterval: 0,
-    fetchPolicy: "no-cache",
+let formData = {};
+const CreateInstallmentPage = (props) => {
+  const navigate = useNavigate();
+  const { id: saleid } = useParams();
+  const { error, data } = useQuery(get_sale_by_id, {
     variables: {
       where: {
-        code: {
-          equals: "VoucherNo",
-        },
+        id: saleid,
       },
     },
+    pollInterval: 0,
   });
-  const [addGate, { data }] = useMutation(create_sale);
-  const [updateVoucher] = useMutation(update_system_data);
-  const [voucherno, setVoucherNo] = useState();
-  let [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  console.log("In installment page");
 
-  useEffect(async () => {
-    setLoading(gqlLoading);
-    console.log(gates);
-    if (!gqlLoading && gates) {
-      let vcode = gates.findManySystemData[0].value;
-      console.log(gates.findManySystemData);
-      formData.voucher_no = vcode;
-      setVoucherNo(gates.findManySystemData);
-    }
-  }, [gqlLoading]);
+  const [changeSale] = useMutation(update_sale);
+  const [addInstallment] = useMutation(create_installment);
 
   const handleSave = async (data) => {
-    console.log(data);
     const plc = { ...data };
-    plc.net_amount = plc.total_amount;
-
-    plc.user_name = props.user.name;
-    plc.userId = props.user.id;
-    let vno = 0;
-    let vid = "";
-    if (voucherno) {
-      vno = parseInt(voucherno[0].value) + 1;
-      vno = vno.toString();
-      vid = voucherno[0].id;
-    }
     console.log(plc);
-    addGate({
+    let amount = plc.total_amount - plc.amount;
+    console.log(amount);
+    const ldate = new Date();
+
+    changeSale({
       variables: {
         data: {
-          voucher_no: plc.voucher_no,
-          customer: plc.customer,
-          address: plc.address,
-          give_amount: plc.give_amount,
-          total_amount: plc.total_amount,
-          net_amount: plc.net_amount,
-          product_status: plc.product_status,
-          user_name: plc.user_name,
-          particular: plc.particular,
-          qty: plc.qty,
-          user: {
-            connect: {
-              id: plc.userId,
-            },
+          customer: {
+            set: plc.customer,
           },
-          shop: {
-            connect: {
-              id: "1",
-            },
+          address: {
+            set: plc.address,
           },
+          total_amount: {
+            set: amount,
+          },
+          give_amount: {
+            increment: plc.amount,
+          },
+          installment_at: {
+            set: ldate,
+          },
+          particular: {
+            set: plc.particular,
+          },
+          qty: {
+            set: plc.qty,
+          },
+          product_status: {
+            set: plc.product_status,
+          },
+        },
+        where: {
+          id: saleid,
         },
       },
-    }).then((resp) => {
-      console.log(resp);
-      updateVoucher({
-        variables: {
-          data: {
-            value: {
-              set: vno,
+    })
+      .then((resp) => {
+        console.log("after update");
+        addInstallment({
+          variables: {
+            data: {
+              particular: plc.particular,
+              qty: plc.qty,
+              price: plc.amount,
+              amount: plc.amount,
+              net_amount: amount,
+              customer: {
+                connect: {
+                  id: plc.id,
+                },
+              },
+              user: {
+                connect: {
+                  id: props.user.id,
+                },
+              },
             },
           },
-          where: {
-            id: vid,
-          },
-        },
-      }).then((resp) => {
-        console.log(resp);
-        navigate(paths.sale);
+        }).then((resp) => {
+          console.log(resp);
+          SalePrint(plc, ldate);
+        });
+      })
+      .catch((error) => {
+        setUpdateError({ ...error, msg: error, show: true });
       });
-    });
-    navigate(paths.sale);
   };
 
   const handleBack = () => {
@@ -126,11 +112,20 @@ const CreateSalePage = (props) => {
   const handleDateChangeRaw = (e) => {
     e.preventDefault();
   };
+  console.log(data);
+
+  if (data) {
+    console.log(data);
+    const sp = data.saleRecord;
+    formData = {
+      ...sp,
+    };
+  }
 
   const EntryForm = () => {
     return (
-      <Formik initialValues={formData} enableReinitialize={true} onSubmit={handleSave} validationSchema={formSchema}>
-        {({ dirty, values, isValid, errors, touched, handleChange, handleSubmit, handleReset, setFieldValue }) => {
+      <Formik initialValues={formData} onSubmit={handleSave} validationSchema={formSchema}>
+        {({ dirty, values, errors, touched, isValid, handleChange, handleSubmit, handleReset, setFieldValue }) => {
           return (
             <Form autoComplete="off">
               <div className="form-control">
@@ -161,6 +156,7 @@ const CreateSalePage = (props) => {
                       value={values.customer}
                       onChange={handleChange}
                       className="input input-primary input-md"
+                      disabled
                     />
                     <ErrorMessage name="customer" component="span" className="text-sm text-red-500 px-2" />
                   </div>
@@ -176,6 +172,7 @@ const CreateSalePage = (props) => {
                       value={values.address}
                       onChange={handleChange}
                       className="input input-primary input-md"
+                      disabled
                     />
                     <ErrorMessage name="address" component="span" className="text-sm text-red-500 px-2" />
                   </div>
@@ -191,6 +188,7 @@ const CreateSalePage = (props) => {
                       value={values.particular}
                       onChange={handleChange}
                       className="input input-primary input-md"
+                      disabled
                     />
                     <ErrorMessage name="particular" component="span" className="text-sm text-red-500 px-2" />
                   </div>
@@ -206,23 +204,24 @@ const CreateSalePage = (props) => {
                       value={values.qty}
                       onChange={handleChange}
                       className="input input-primary input-md"
+                      disabled
                     />
                     <ErrorMessage name="qty" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ကြွေးကျန်</div>
+                  <div className="w-48 p-2 m-2 label">ပေးငွေ</div>
                   <div className="p-2 m-2">
                     <Field
                       type="number"
-                      id="total_amount"
-                      name="total_amount"
-                      placeholder="total_amount"
-                      value={values.total_amount}
+                      id="amount"
+                      name="amount"
+                      placeholder="amount"
+                      value={values.amount}
                       onChange={handleChange}
                       className="input input-primary input-md"
                     />
-                    <ErrorMessage name="total_amount" component="span" className="text-sm text-red-500 px-2" />
+                    <ErrorMessage name="amount" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap w-auto">
@@ -253,7 +252,6 @@ const CreateSalePage = (props) => {
                     Clear
                   </button>
                 </div>
-                <LoadingIndicator loading={loading} color="#000099" />
               </div>
             </Form>
           );
@@ -264,7 +262,7 @@ const CreateSalePage = (props) => {
 
   return (
     <div className="p-2 flex flex-col">
-      <div className="px-4 text-2xl font-bold">New Customer</div>
+      <div className="px-4 text-2xl font-bold">Edit Customer</div>
       <EntryForm />
     </div>
   );
@@ -275,4 +273,4 @@ const ProductStatus = [
   { label: "ပစ္စည်းမယူရသေး", value: "BEFORE" },
 ];
 
-export default withUser(CreateSalePage);
+export default withUser(CreateInstallmentPage);

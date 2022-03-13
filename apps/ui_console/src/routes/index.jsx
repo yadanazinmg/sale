@@ -21,6 +21,9 @@ import NotFound from "../pages/not_found";
 import SalePage from "../pages/sale_entry/sale_page";
 import CreateSalePage from "../pages/sale_entry/new_sale_page";
 import EditSalePage from "../pages/sale_entry/edit_sale_page";
+
+import CreateInstallmentPage from "../pages/Installment/new_installment_page";
+
 export const AppRoutes = (props) => {
   return (
     <div>
@@ -42,6 +45,8 @@ export const AppRoutes = (props) => {
         <Route path={paths.sale} element={<ProtectedPage page={SalePage} />} />
         <Route path={paths.sale_create} element={<ProtectedPage page={CreateSalePage} />} />
         <Route path={paths.sale_edit} element={<ProtectedPage page={EditSalePage} />} />
+
+        <Route path={paths.installment_create} element={<ProtectedPage page={CreateInstallmentPage} />} />
         <Route component={NotFound} />
       </Routes>
     </div>

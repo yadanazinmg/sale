@@ -80,32 +80,36 @@ const SalePage = (props) => {
     }
   }, [gqlLoading]);
 
+  const handleInstallment = (id) => {
+    navigate(`/installment_create/${id}`);
+  };
+
   const handleTextChange = (e) => {
     console.log(e.target.value);
     gridApi.setQuickFilter(e.target.value);
     //
   };
   const rowActionsRenderer = (params) => {
-    if (params.data.net_amount > 0) {
+    if (params.data.total_amount > 0) {
       return (
         <div className="flex flex-row">
-          <div className="grid-btn-primary my-1 mx-4" onClick={() => handleEdit(params.value)}>
-            <MoneyAddIcon className="w-8 h-8" />
-          </div>
-          <label htmlFor="delete-confirm" className="grid-btn-important mx-2 my-1 modal-button" onClick={() => handleEdit(params.data.id)}>
+          <label htmlFor="delete-confirm" className="grid-btn-important my-1 mx-4  modal-button" onClick={() => handleEdit(params.data.id)}>
             <EditPerson className="w-8 h-8" disabled={true} />
           </label>
+          <div className="grid-btn-primary mx-2 my-1" onClick={() => handleInstallment(params.data.id)}>
+            <MoneyAddIcon className="w-8 h-8" />
+          </div>
         </div>
       );
     } else {
       return (
         <div className="flex flex-row">
-          <div className="icon-btn-primary" onClick={() => handleEdit(params.data.id)}>
-            <EditPerson />
-          </div>
+          <label htmlFor="delete-confirm" className="grid-btn-important  my-1 mx-4 modal-button" onClick={() => handleEdit(params.data.id)}>
+            <EditPerson className="w-8 h-8" disabled={true} />
+          </label>
           <label
             htmlFor="delete-confirm"
-            className="grid-btn-important mx-2 my-1 modal-button"
+            className="grid-btn-important mx-2 my-1 modal-button bg-error"
             onClick={() => handleUserDelete(params.value, params.data.role)}
           >
             <DeletePerson className="w-8 h-8" disabled={true} />
@@ -120,13 +124,13 @@ const SalePage = (props) => {
   const columnDefs = useMemo(
     () => [
       //{ field: "id", width: 300 },
-      { headerName: "ဘောင်ချာနံပါတ်", field: "voucher_no", width: 100 },
+      { headerName: "ဘောင်ချာနံပါတ်", field: "voucher_no", width: 130 },
       { headerName: "နေ့စွဲ", field: "created_at", width: 180, valueFormatter: dateFormatter },
       { headerName: "ဝယ်သူအမည်", field: "customer", width: 130 },
       { headerName: "နေရပ်", field: "address", width: 130 },
       { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
       { headerName: "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ", field: "installment_at", width: 180, valueFormatter: dateFormatter },
-      { headerName: "ကြွေးကျန်", field: "net_amount", width: 180 },
+      { headerName: "ကြွေးကျန်", field: "total_amount", width: 180 },
       { headerName: "Actions", width: 150, autoHeight: true, cellRendererFramework: rowActionsRenderer },
     ],
     []
@@ -146,7 +150,7 @@ const SalePage = (props) => {
   return (
     <div className="relative flex flex-col h-full">
       <div className="w-full flex flex-row px-6 py-0 lg:hidden place-content-center">
-        <span className="text-3xl font-semibold capitalize ">Installment Customers</span>
+        <span className="text-3xl font-semibold capitalize ">Sale</span>
       </div>
       <div className="w-full grid lg:grid-cols-3 grid-cols-1 px-4 py-2 justify-between">
         <div className="flex flex-row">
@@ -159,7 +163,7 @@ const SalePage = (props) => {
           </div>
         </div>
         <div className="px-6 py-2 hidden lg:flex place-content-center">
-          <span className="px-2 text-3xl font-semibold capitalize ">Installment Customers</span>
+          <span className="px-2 text-3xl font-semibold capitalize ">Sale</span>
         </div>
         <div className="w-full flex flex-row py-1 lg:place-content-center place-content-end">
           <span className="pt-2 pr-2 text-lg">Count :</span>

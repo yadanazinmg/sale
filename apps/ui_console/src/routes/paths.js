@@ -61,6 +61,11 @@ const paths = {
   sale_create: "/sale_create",
   sale_edit: "/sale_edit/:id",
   getSaleEdit: (id) => `/sale_edit/${id}`,
+
+  installment: "/installment",
+  installment_create: "/installment_create/:id",
+  installment_edit: "/installment_edit/:id",
+  getInstallmentEdit: (id) => `/installment_edit/${id}`,
 };
 
 export default paths;

@@ -86,7 +86,7 @@ const LoginPage = (props) => {
                     </div>
                   </div>
                   <div className="flex flex-col py-3 items-center">
-                    <button type="submit" disabled={!dirty} className="btn btn-sm btn-primary">
+                    <button type="submit" disabled={!dirty} className="p-3 h-12 w-24 mb-2 btn btn-primary">
                       Login
                     </button>
                     {loginError && <span className="text-sm text-red-500">{loginError}</span>}

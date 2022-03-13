@@ -32,7 +32,7 @@ const FullLayout = () => {
               </div>
 
               <div title="User" className="items-center  flex-none py-4">
-                <span className="text-primary"> {auth.user?.name}</span>
+                {/* <span className="text-primary"> {auth.user?.name}</span> */}
               </div>
             </div>
           </div>

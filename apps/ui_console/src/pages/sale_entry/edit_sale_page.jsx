@@ -5,10 +5,9 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { get_gate_by_Id, update_gate } from "../../graphql/gate";
 import paths from "../../routes/paths";
 import withUser from "../../hocs/with_user";
-import { get_sales } from "../../graphql/sale";
+import { get_sale_by_id, update_sale } from "../../graphql/sale";
 
 const formSchema = yup.object().shape({
   customer: yup.string().required("Gate Type is required."),
@@ -18,35 +17,49 @@ const formSchema = yup.object().shape({
 let formData = {};
 const EditSalePage = (props) => {
   const navigate = useNavigate();
-  const { id: gateid } = useParams();
-  console.log(gateid);
-  const { error, data } = useQuery(get_sales, {
+  const { id: saleid } = useParams();
+  const { error, data } = useQuery(get_sale_by_id, {
     variables: {
       where: {
-        id: gateid,
+        id: saleid,
       },
     },
     pollInterval: 0,
   });
 
-  const [changeGate] = useMutation(update_gate);
+  const [changeSale] = useMutation(update_sale);
 
   const handleSave = async (data) => {
     const plc = { ...data };
     console.log(plc);
 
-    changeGate({
+    changeSale({
       variables: {
         data: {
-          name: {
-            set: plc.name,
+          customer: {
+            set: plc.customer,
           },
-          gate_type: {
-            set: plc.gate_type,
+          address: {
+            set: plc.address,
+          },
+          give_amount: {
+            set: plc.give_amount,
+          },
+          total_amount: {
+            set: plc.total_amount,
+          },
+          particular: {
+            set: plc.particular,
+          },
+          qty: {
+            set: plc.qty,
+          },
+          product_status: {
+            set: plc.product_status,
           },
         },
         where: {
-          id: gateid,
+          id: saleid,
         },
       },
     })
@@ -68,10 +81,11 @@ const EditSalePage = (props) => {
   const handleDateChangeRaw = (e) => {
     e.preventDefault();
   };
+  console.log(data);
 
   if (data) {
     console.log(data);
-    const sp = data.sale;
+    const sp = data.saleRecord;
     formData = {
       ...sp,
     };

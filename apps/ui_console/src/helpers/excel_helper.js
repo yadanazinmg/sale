@@ -284,3 +284,45 @@ export const HourExcelExport = async (parkingrecord, from, to) => {
     saveAs(blob, filename + fileExtension);
   } catch {}
 };
+
+export const SalePrint = async (saleRecord, date) => {
+  console.log("in excel");
+  try {
+    const data = saleRecord;
+    console.log(data);
+    const dateStr = moment().format("YYYYMMDD_hhmmss");
+    const filename = `shift_report_${dateStr}`;
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = "IV";
+    workbook.created = new Date();
+    workbook.modified = new Date();
+    workbook.properties.date1904 = true;
+    const sheet = workbook.addWorksheet("Detail");
+    // sheet.addRow(["From", "To"]);
+    //sheet.addRow([new Date(from), new Date(to)]);
+    //.addRow();
+    const rowValues = [];
+    rowValues[1] = "Shift";
+    rowValues[2] = "Car Count";
+    rowValues[3] = "Total Parking Fee";
+    sheet.addRow(rowValues);
+
+    // data.forEach((pr) => {
+    //   const rowValues = [];
+    //   rowValues[1] = pr.shift;
+    //   rowValues[2] = parseInt(pr.count);
+    //   rowValues[3] = parseFloat(pr.amount);
+    //   sheet.addRow(rowValues);
+    // });
+    sheet.getCell("A2").numFmt = "dd/mm/yyyy";
+    sheet.getCell("B2").numFmt = "dd/mm/yyyy";
+    console.log(workbook);
+    const buffer = await workbook.xlsx.writeBuffer();
+    console.log(buffer);
+    const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    const fileExtension = ".xlsx";
+
+    const blob = new Blob([buffer], { type: fileType });
+    saveAs(blob, filename + fileExtension);
+  } catch {}
+};
