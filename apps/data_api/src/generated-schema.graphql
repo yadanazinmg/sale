@@ -1200,6 +1200,7 @@ type SaleRecord {
   address: String
   created_at: DateTime!
   customer: String!
+  father_name: String
   give_amount: Int
   id: String!
   installment_amount: Int
@@ -1208,8 +1209,12 @@ type SaleRecord {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus!
   qty: Int
+  referral: String
+  referral_phone: String
   shop: Shop!
   shop_id: String!
   total_amount: Int!
@@ -1224,6 +1229,7 @@ type SaleRecordAvgAggregate {
   give_amount: Float
   installment_amount: Float
   net_amount: Float
+  price: Float
   qty: Float
   total_amount: Float
 }
@@ -1232,6 +1238,7 @@ input SaleRecordAvgOrderByAggregateInput {
   give_amount: SortOrder
   installment_amount: SortOrder
   net_amount: SortOrder
+  price: SortOrder
   qty: SortOrder
   total_amount: SortOrder
 }
@@ -1245,6 +1252,7 @@ type SaleRecordCountAggregate {
   address: Int!
   created_at: Int!
   customer: Int!
+  father_name: Int!
   give_amount: Int!
   id: Int!
   installment_amount: Int!
@@ -1252,8 +1260,12 @@ type SaleRecordCountAggregate {
   metadata: Int!
   net_amount: Int!
   particular: Int!
+  phone: Int!
+  price: Int!
   product_status: Int!
   qty: Int!
+  referral: Int!
+  referral_phone: Int!
   shop_id: Int!
   total_amount: Int!
   updated_at: Int!
@@ -1266,6 +1278,7 @@ input SaleRecordCountOrderByAggregateInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
   installment_amount: SortOrder
@@ -1273,8 +1286,12 @@ input SaleRecordCountOrderByAggregateInput {
   metadata: SortOrder
   net_amount: SortOrder
   particular: SortOrder
+  phone: SortOrder
+  price: SortOrder
   product_status: SortOrder
   qty: SortOrder
+  referral: SortOrder
+  referral_phone: SortOrder
   shop_id: SortOrder
   total_amount: SortOrder
   updated_at: SortOrder
@@ -1287,6 +1304,7 @@ input SaleRecordCreateInput {
   address: String
   created_at: DateTime
   customer: String!
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1295,8 +1313,12 @@ input SaleRecordCreateInput {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   shop: ShopCreateNestedOneWithoutSale_recordsInput!
   total_amount: Int!
   updated_at: DateTime
@@ -1309,6 +1331,7 @@ input SaleRecordCreateManyInput {
   address: String
   created_at: DateTime
   customer: String!
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1316,8 +1339,12 @@ input SaleRecordCreateManyInput {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   shop_id: String!
   total_amount: Int!
   updated_at: DateTime
@@ -1330,6 +1357,7 @@ input SaleRecordCreateManyShopInput {
   address: String
   created_at: DateTime
   customer: String!
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1337,8 +1365,12 @@ input SaleRecordCreateManyShopInput {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   total_amount: Int!
   updated_at: DateTime
   user_id: String
@@ -1355,6 +1387,7 @@ input SaleRecordCreateManyUserInput {
   address: String
   created_at: DateTime
   customer: String!
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1362,8 +1395,12 @@ input SaleRecordCreateManyUserInput {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   shop_id: String!
   total_amount: Int!
   updated_at: DateTime
@@ -1415,6 +1452,7 @@ input SaleRecordCreateWithoutInstallment_recordsInput {
   address: String
   created_at: DateTime
   customer: String!
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1422,8 +1460,12 @@ input SaleRecordCreateWithoutInstallment_recordsInput {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   shop: ShopCreateNestedOneWithoutSale_recordsInput!
   total_amount: Int!
   updated_at: DateTime
@@ -1436,6 +1478,7 @@ input SaleRecordCreateWithoutShopInput {
   address: String
   created_at: DateTime
   customer: String!
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1444,8 +1487,12 @@ input SaleRecordCreateWithoutShopInput {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   total_amount: Int!
   updated_at: DateTime
   user: UserCreateNestedOneWithoutSale_recordsInput
@@ -1457,6 +1504,7 @@ input SaleRecordCreateWithoutUserInput {
   address: String
   created_at: DateTime
   customer: String!
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1465,8 +1513,12 @@ input SaleRecordCreateWithoutUserInput {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   shop: ShopCreateNestedOneWithoutSale_recordsInput!
   total_amount: Int!
   updated_at: DateTime
@@ -1483,6 +1535,7 @@ type SaleRecordGroupBy {
   address: String
   created_at: DateTime!
   customer: String!
+  father_name: String
   give_amount: Int
   id: String!
   installment_amount: Int
@@ -1490,8 +1543,12 @@ type SaleRecordGroupBy {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus!
   qty: Int
+  referral: String
+  referral_phone: String
   shop_id: String!
   total_amount: Int!
   updated_at: DateTime!
@@ -1510,6 +1567,7 @@ type SaleRecordMaxAggregate {
   address: String
   created_at: DateTime
   customer: String
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1517,8 +1575,12 @@ type SaleRecordMaxAggregate {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   shop_id: String
   total_amount: Int
   updated_at: DateTime
@@ -1531,6 +1593,7 @@ input SaleRecordMaxOrderByAggregateInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
   installment_amount: SortOrder
@@ -1538,8 +1601,12 @@ input SaleRecordMaxOrderByAggregateInput {
   metadata: SortOrder
   net_amount: SortOrder
   particular: SortOrder
+  phone: SortOrder
+  price: SortOrder
   product_status: SortOrder
   qty: SortOrder
+  referral: SortOrder
+  referral_phone: SortOrder
   shop_id: SortOrder
   total_amount: SortOrder
   updated_at: SortOrder
@@ -1552,6 +1619,7 @@ type SaleRecordMinAggregate {
   address: String
   created_at: DateTime
   customer: String
+  father_name: String
   give_amount: Int
   id: String
   installment_amount: Int
@@ -1559,8 +1627,12 @@ type SaleRecordMinAggregate {
   metadata: String
   net_amount: Int
   particular: String
+  phone: String
+  price: Int
   product_status: ProductStatus
   qty: Int
+  referral: String
+  referral_phone: String
   shop_id: String
   total_amount: Int
   updated_at: DateTime
@@ -1573,6 +1645,7 @@ input SaleRecordMinOrderByAggregateInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
   installment_amount: SortOrder
@@ -1580,8 +1653,12 @@ input SaleRecordMinOrderByAggregateInput {
   metadata: SortOrder
   net_amount: SortOrder
   particular: SortOrder
+  phone: SortOrder
+  price: SortOrder
   product_status: SortOrder
   qty: SortOrder
+  referral: SortOrder
+  referral_phone: SortOrder
   shop_id: SortOrder
   total_amount: SortOrder
   updated_at: SortOrder
@@ -1603,6 +1680,7 @@ input SaleRecordOrderByWithAggregationInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
   installment_amount: SortOrder
@@ -1610,8 +1688,12 @@ input SaleRecordOrderByWithAggregationInput {
   metadata: SortOrder
   net_amount: SortOrder
   particular: SortOrder
+  phone: SortOrder
+  price: SortOrder
   product_status: SortOrder
   qty: SortOrder
+  referral: SortOrder
+  referral_phone: SortOrder
   shop_id: SortOrder
   total_amount: SortOrder
   updated_at: SortOrder
@@ -1624,6 +1706,7 @@ input SaleRecordOrderByWithRelationInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
   installment_amount: SortOrder
@@ -1632,8 +1715,12 @@ input SaleRecordOrderByWithRelationInput {
   metadata: SortOrder
   net_amount: SortOrder
   particular: SortOrder
+  phone: SortOrder
+  price: SortOrder
   product_status: SortOrder
   qty: SortOrder
+  referral: SortOrder
+  referral_phone: SortOrder
   shop: ShopOrderByWithRelationInput
   shop_id: SortOrder
   total_amount: SortOrder
@@ -1653,6 +1740,7 @@ enum SaleRecordScalarFieldEnum {
   address
   created_at
   customer
+  father_name
   give_amount
   id
   installment_amount
@@ -1660,8 +1748,12 @@ enum SaleRecordScalarFieldEnum {
   metadata
   net_amount
   particular
+  phone
+  price
   product_status
   qty
+  referral
+  referral_phone
   shop_id
   total_amount
   updated_at
@@ -1677,6 +1769,7 @@ input SaleRecordScalarWhereInput {
   address: StringNullableFilter
   created_at: DateTimeFilter
   customer: StringFilter
+  father_name: StringNullableFilter
   give_amount: IntNullableFilter
   id: StringFilter
   installment_amount: IntNullableFilter
@@ -1684,8 +1777,12 @@ input SaleRecordScalarWhereInput {
   metadata: StringNullableFilter
   net_amount: IntNullableFilter
   particular: StringNullableFilter
+  phone: StringNullableFilter
+  price: IntNullableFilter
   product_status: EnumProductStatusFilter
   qty: IntNullableFilter
+  referral: StringNullableFilter
+  referral_phone: StringNullableFilter
   shop_id: StringFilter
   total_amount: IntFilter
   updated_at: DateTimeFilter
@@ -1701,6 +1798,7 @@ input SaleRecordScalarWhereWithAggregatesInput {
   address: StringNullableWithAggregatesFilter
   created_at: DateTimeWithAggregatesFilter
   customer: StringWithAggregatesFilter
+  father_name: StringNullableWithAggregatesFilter
   give_amount: IntNullableWithAggregatesFilter
   id: StringWithAggregatesFilter
   installment_amount: IntNullableWithAggregatesFilter
@@ -1708,8 +1806,12 @@ input SaleRecordScalarWhereWithAggregatesInput {
   metadata: StringNullableWithAggregatesFilter
   net_amount: IntNullableWithAggregatesFilter
   particular: StringNullableWithAggregatesFilter
+  phone: StringNullableWithAggregatesFilter
+  price: IntNullableWithAggregatesFilter
   product_status: EnumProductStatusWithAggregatesFilter
   qty: IntNullableWithAggregatesFilter
+  referral: StringNullableWithAggregatesFilter
+  referral_phone: StringNullableWithAggregatesFilter
   shop_id: StringWithAggregatesFilter
   total_amount: IntWithAggregatesFilter
   updated_at: DateTimeWithAggregatesFilter
@@ -1722,6 +1824,7 @@ type SaleRecordSumAggregate {
   give_amount: Int
   installment_amount: Int
   net_amount: Int
+  price: Int
   qty: Int
   total_amount: Int
 }
@@ -1730,6 +1833,7 @@ input SaleRecordSumOrderByAggregateInput {
   give_amount: SortOrder
   installment_amount: SortOrder
   net_amount: SortOrder
+  price: SortOrder
   qty: SortOrder
   total_amount: SortOrder
 }
@@ -1738,6 +1842,7 @@ input SaleRecordUpdateInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   installment_amount: NullableIntFieldUpdateOperationsInput
@@ -1746,8 +1851,12 @@ input SaleRecordUpdateInput {
   metadata: NullableStringFieldUpdateOperationsInput
   net_amount: NullableIntFieldUpdateOperationsInput
   particular: NullableStringFieldUpdateOperationsInput
+  phone: NullableStringFieldUpdateOperationsInput
+  price: NullableIntFieldUpdateOperationsInput
   product_status: EnumProductStatusFieldUpdateOperationsInput
   qty: NullableIntFieldUpdateOperationsInput
+  referral: NullableStringFieldUpdateOperationsInput
+  referral_phone: NullableStringFieldUpdateOperationsInput
   shop: ShopUpdateOneRequiredWithoutSale_recordsInput
   total_amount: IntFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
@@ -1760,6 +1869,7 @@ input SaleRecordUpdateManyMutationInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   installment_amount: NullableIntFieldUpdateOperationsInput
@@ -1767,8 +1877,12 @@ input SaleRecordUpdateManyMutationInput {
   metadata: NullableStringFieldUpdateOperationsInput
   net_amount: NullableIntFieldUpdateOperationsInput
   particular: NullableStringFieldUpdateOperationsInput
+  phone: NullableStringFieldUpdateOperationsInput
+  price: NullableIntFieldUpdateOperationsInput
   product_status: EnumProductStatusFieldUpdateOperationsInput
   qty: NullableIntFieldUpdateOperationsInput
+  referral: NullableStringFieldUpdateOperationsInput
+  referral_phone: NullableStringFieldUpdateOperationsInput
   total_amount: IntFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   user_name: NullableStringFieldUpdateOperationsInput
@@ -1837,6 +1951,7 @@ input SaleRecordUpdateWithoutInstallment_recordsInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   installment_amount: NullableIntFieldUpdateOperationsInput
@@ -1844,8 +1959,12 @@ input SaleRecordUpdateWithoutInstallment_recordsInput {
   metadata: NullableStringFieldUpdateOperationsInput
   net_amount: NullableIntFieldUpdateOperationsInput
   particular: NullableStringFieldUpdateOperationsInput
+  phone: NullableStringFieldUpdateOperationsInput
+  price: NullableIntFieldUpdateOperationsInput
   product_status: EnumProductStatusFieldUpdateOperationsInput
   qty: NullableIntFieldUpdateOperationsInput
+  referral: NullableStringFieldUpdateOperationsInput
+  referral_phone: NullableStringFieldUpdateOperationsInput
   shop: ShopUpdateOneRequiredWithoutSale_recordsInput
   total_amount: IntFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
@@ -1858,6 +1977,7 @@ input SaleRecordUpdateWithoutShopInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   installment_amount: NullableIntFieldUpdateOperationsInput
@@ -1866,8 +1986,12 @@ input SaleRecordUpdateWithoutShopInput {
   metadata: NullableStringFieldUpdateOperationsInput
   net_amount: NullableIntFieldUpdateOperationsInput
   particular: NullableStringFieldUpdateOperationsInput
+  phone: NullableStringFieldUpdateOperationsInput
+  price: NullableIntFieldUpdateOperationsInput
   product_status: EnumProductStatusFieldUpdateOperationsInput
   qty: NullableIntFieldUpdateOperationsInput
+  referral: NullableStringFieldUpdateOperationsInput
+  referral_phone: NullableStringFieldUpdateOperationsInput
   total_amount: IntFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
   user: UserUpdateOneWithoutSale_recordsInput
@@ -1879,6 +2003,7 @@ input SaleRecordUpdateWithoutUserInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   installment_amount: NullableIntFieldUpdateOperationsInput
@@ -1887,8 +2012,12 @@ input SaleRecordUpdateWithoutUserInput {
   metadata: NullableStringFieldUpdateOperationsInput
   net_amount: NullableIntFieldUpdateOperationsInput
   particular: NullableStringFieldUpdateOperationsInput
+  phone: NullableStringFieldUpdateOperationsInput
+  price: NullableIntFieldUpdateOperationsInput
   product_status: EnumProductStatusFieldUpdateOperationsInput
   qty: NullableIntFieldUpdateOperationsInput
+  referral: NullableStringFieldUpdateOperationsInput
+  referral_phone: NullableStringFieldUpdateOperationsInput
   shop: ShopUpdateOneRequiredWithoutSale_recordsInput
   total_amount: IntFieldUpdateOperationsInput
   updated_at: DateTimeFieldUpdateOperationsInput
@@ -1920,6 +2049,7 @@ input SaleRecordWhereInput {
   address: StringNullableFilter
   created_at: DateTimeFilter
   customer: StringFilter
+  father_name: StringNullableFilter
   give_amount: IntNullableFilter
   id: StringFilter
   installment_amount: IntNullableFilter
@@ -1928,8 +2058,12 @@ input SaleRecordWhereInput {
   metadata: StringNullableFilter
   net_amount: IntNullableFilter
   particular: StringNullableFilter
+  phone: StringNullableFilter
+  price: IntNullableFilter
   product_status: EnumProductStatusFilter
   qty: IntNullableFilter
+  referral: StringNullableFilter
+  referral_phone: StringNullableFilter
   shop: ShopRelationFilter
   shop_id: StringFilter
   total_amount: IntFilter

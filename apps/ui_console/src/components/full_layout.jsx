@@ -28,7 +28,7 @@ const FullLayout = () => {
               <AppName className="lg:hidden" />
               <AppVersion className="lg:hidden" prefix="v" />
               <div className="flex-1 flex place-content-center">
-                <span className="text-3xl font-bold hidden lg:flex">ZM Installment System</span>
+                <span className="text-3xl font-bold hidden lg:flex"></span>
               </div>
 
               <div title="User" className="items-center  flex-none py-4">

@@ -9,7 +9,9 @@ import { create_sale } from "../../graphql/sale";
 import { get_system_data, update_system_data } from "../../graphql/system_data";
 import LoadingIndicator from "../../components/loading_indicator";
 import paths from "../../routes/paths";
-
+import PicturePicker from "../../components/picture_picker";
+import ProgressBar from "../../controls/progress_bar";
+import axios from "axios";
 const formSchema = yup.object().shape({
   customer: yup.string().required("Gate Type is required."),
   total_amount: yup.number().required("Gate Type is required."),
@@ -46,6 +48,8 @@ const CreateSalePage = (props) => {
   const [updateVoucher] = useMutation(update_system_data);
   const [voucherno, setVoucherNo] = useState();
   let [loading, setLoading] = useState(true);
+  const [uploadProgress, setUploadProgress] = useState(50);
+  const [pictureUrl, setPictureUrl] = useState();
   const navigate = useNavigate();
 
   useEffect(async () => {
@@ -61,6 +65,27 @@ const CreateSalePage = (props) => {
 
   const handleSave = async (data) => {
     console.log(data);
+    const pdata = new FormData();
+    pdata.append("file", data.picture);
+    console.log(pdata);
+
+    if (data.picture) {
+      axios
+        .post("http://localhost:7000/upload", pdata, {
+          // receive two parameter endpoint url ,form data
+          onUploadProgress: (ProgressEvent) => {
+            // setLoaded((ProgressEvent.loaded / ProgressEvent.total) * 100);
+          },
+        })
+        .then((res) => {
+          // then print response status
+          console.log(res.statusText);
+        })
+        .catch((err) => {
+          //toast.error("upload fail");
+        });
+    }
+    return;
     const plc = { ...data };
     plc.net_amount = plc.total_amount;
     console.log(props.user.id);
@@ -259,6 +284,16 @@ const CreateSalePage = (props) => {
                         <option value={r.value}>{r.label}</option>
                       ))}
                     </select>
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">Photo</div>
+                  <div className="flex flex-col items-left align-middle">
+                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-2 m-2" style={{ height: "200px", width: "200px" }}>
+                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
+                      <ProgressBar className="p-2" percent={uploadProgress} />
+                      <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-nowrap p-3">

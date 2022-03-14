@@ -72,6 +72,12 @@ model saleRecord {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   installment_at DateTime?
+  phone String?
+  father_name String? @db.VarChar(255)
+  referral String?
+  referral_phone String?
+  price Int?
+
   @@map("sale_records")
 }
 

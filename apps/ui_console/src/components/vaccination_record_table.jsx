@@ -172,7 +172,7 @@ const VaccinationRecordTable = (props) => {
               <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
                 <span className=" w-60 border-gray-500"></span>
                 {sales.product_status == "AFTER" && <span className="w-40 border-red-500 border-2 text-sm font-bold rounded-full italic">ကုန်ထုတ်ပေးပြီး</span>}
-                {sales.product_status == "Before" && <span className="w-40 text-sm font-bold border-red-500">ကုန်မထုတ်ရသေး</span>}
+                {sales.product_status == "BEFORE" && <span className="w-40 border-red-500 border-2 text-sm font-bold rounded-full italic">ကုန်မထုတ်ရသေး</span>}
               </div>
               <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
                 {" "}
