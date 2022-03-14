@@ -24,7 +24,7 @@ const SalePage = (props) => {
     pollInterval: 0,
     fetchPolicy: "no-cache",
   });
-  const [deleteTicketType] = useMutation(delete_sale);
+  const [deleteSale] = useMutation(delete_sale);
   const [gate, setGate] = useState([]);
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -38,6 +38,15 @@ const SalePage = (props) => {
   });
 
   const navigate = useNavigate();
+
+  useEffect(async () => {
+    setLoading(gqlLoading);
+    console.log(ticketTypes);
+    if (!gqlLoading && ticketTypes) {
+      setGate(ticketTypes.saleRecords);
+      setRowCount(ticketTypes.saleRecords.length);
+    }
+  }, [gqlLoading]);
 
   const handleCreate = () => {
     console.log("create");
@@ -57,28 +66,22 @@ const SalePage = (props) => {
 
   const handleConfirmPopupClose = async (confirm) => {
     console.log("Before Confirm");
-    setPopup({ ...popup, open: false });
     if (confirm) {
-      deleteTicketType({
-        variables: {
-          where: {
-            id: deleteId,
+      setPopup({ ...popup, open: false });
+      if (confirm) {
+        deleteSale({
+          variables: {
+            where: {
+              id: deleteId,
+            },
           },
-        },
-      }).then((resp) => {
-        console.log(resp);
-      });
-      refetch();
+        }).then((resp) => {
+          console.log(resp);
+        });
+        refetch();
+      }
     }
   };
-  useEffect(async () => {
-    setLoading(gqlLoading);
-    console.log(ticketTypes);
-    if (!gqlLoading && ticketTypes) {
-      setGate(ticketTypes.saleRecords);
-      setRowCount(ticketTypes.saleRecords.length);
-    }
-  }, [gqlLoading]);
 
   const handleInstallment = (id) => {
     navigate(`/installment_create/${id}`);
@@ -107,11 +110,7 @@ const SalePage = (props) => {
           <label htmlFor="delete-confirm" className="grid-btn-important  my-1 mx-4 modal-button" onClick={() => handleEdit(params.data.id)}>
             <EditPerson className="w-8 h-8" disabled={true} />
           </label>
-          <label
-            htmlFor="delete-confirm"
-            className="grid-btn-important mx-2 my-1 modal-button bg-error"
-            onClick={() => handleUserDelete(params.value, params.data.role)}
-          >
+          <label htmlFor="delete-confirm" className="grid-btn-important mx-2 my-1 modal-button bg-error" onClick={() => handleDelete(params.data.id)}>
             <DeletePerson className="w-8 h-8" disabled={true} />
           </label>
         </div>

@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import withUser from "../../hocs/with_user";
 import * as yup from "yup";
+import DatePicker from "react-datepicker";
 import { create_sale } from "../../graphql/sale";
 import { get_system_data, update_system_data } from "../../graphql/system_data";
 import LoadingIndicator from "../../components/loading_indicator";
@@ -62,7 +63,7 @@ const CreateSalePage = (props) => {
     console.log(data);
     const plc = { ...data };
     plc.net_amount = plc.total_amount;
-
+    console.log(props.user.id);
     plc.user_name = props.user.name;
     plc.userId = props.user.id;
     let vno = 0;
@@ -85,6 +86,7 @@ const CreateSalePage = (props) => {
           product_status: plc.product_status,
           user_name: plc.user_name,
           particular: plc.particular,
+          installment_at: plc.installment_at,
           qty: plc.qty,
           user: {
             connect: {
@@ -113,10 +115,10 @@ const CreateSalePage = (props) => {
         },
       }).then((resp) => {
         console.log(resp);
-        navigate(paths.sale);
+        //navigate(paths.sale);
       });
     });
-    navigate(paths.sale);
+    navigate(-1);
   };
 
   const handleBack = () => {
@@ -223,6 +225,23 @@ const CreateSalePage = (props) => {
                       className="input input-primary input-md"
                     />
                     <ErrorMessage name="total_amount" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">နောက်ဆုံးကြွေးဆပ်နေ့စွဲ</div>
+                  <div className="p-2 m-2">
+                    <DatePicker
+                      id="installment_at"
+                      name="installment_at"
+                      selected={values.installment_at}
+                      // maxDate={new Date()}
+                      dateFormat="dd/MM/yyyy"
+                      onChange={(date) => setFieldValue("installment_at", date)}
+                      // onChangeRaw={handleDateChangeRaw}
+                      autoComplete="off"
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="installment_at" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap w-auto">

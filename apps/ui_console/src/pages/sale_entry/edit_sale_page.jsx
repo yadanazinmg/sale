@@ -18,7 +18,11 @@ let formData = {};
 const EditSalePage = (props) => {
   const navigate = useNavigate();
   const { id: saleid } = useParams();
-  const { error, data } = useQuery(get_sale_by_id, {
+  const {
+    loading: gqlLoading,
+    error,
+    data: sale,
+  } = useQuery(get_sale_by_id, {
     variables: {
       where: {
         id: saleid,
@@ -28,6 +32,8 @@ const EditSalePage = (props) => {
   });
 
   const [changeSale] = useMutation(update_sale);
+  let [loading, setLoading] = useState(true);
+  const [sales, setSale] = useState();
 
   const handleSave = async (data) => {
     const plc = { ...data };
@@ -51,6 +57,9 @@ const EditSalePage = (props) => {
           particular: {
             set: plc.particular,
           },
+          installment_at: {
+            set: plc.installment_at,
+          },
           qty: {
             set: plc.qty,
           },
@@ -70,8 +79,6 @@ const EditSalePage = (props) => {
       .catch((error) => {
         setUpdateError({ ...error, msg: error, show: true });
       });
-    navigate(paths.sale);
-    return;
   };
 
   const handleBack = () => {
@@ -81,11 +88,11 @@ const EditSalePage = (props) => {
   const handleDateChangeRaw = (e) => {
     e.preventDefault();
   };
-  console.log(data);
 
-  if (data) {
-    console.log(data);
-    const sp = data.saleRecord;
+  if (sale) {
+    console.log(sale);
+    const sp = sale.saleRecord;
+    sp.installment_at = new Date(sp.installment_at);
     formData = {
       ...sp,
     };
@@ -187,6 +194,23 @@ const EditSalePage = (props) => {
                       className="input input-primary input-md"
                     />
                     <ErrorMessage name="total_amount" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">နောက်ဆုံးကြွေးဆပ်နေ့စွဲ</div>
+                  <div className="p-2 m-2">
+                    <DatePicker
+                      id="installment_at"
+                      name="installment_at"
+                      selected={values.installment_at}
+                      // maxDate={new Date()}
+                      dateFormat="dd/MM/yyyy"
+                      onChange={(date) => setFieldValue("installment_at", date)}
+                      // onChangeRaw={handleDateChangeRaw}
+                      autoComplete="off"
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="installment_at" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap w-auto">

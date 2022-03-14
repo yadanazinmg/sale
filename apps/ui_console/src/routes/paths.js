@@ -66,6 +66,10 @@ const paths = {
   installment_create: "/installment_create/:id",
   installment_edit: "/installment_edit/:id",
   getInstallmentEdit: (id) => `/installment_edit/${id}`,
+
+  print_record_base: "/print_record/",
+  print_record: "/print_record/:id",
+  getPrintRecord: (id) => `/print_record/${id}`,
 };
 
 export default paths;

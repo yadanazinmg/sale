@@ -67,6 +67,7 @@ const RedemptionPage = (props) => {
     console.log("Confirm");
     try {
       if (confirm) {
+        console.log("Afterconfirm");
         deleteRedemption({
           variables: {
             where: {

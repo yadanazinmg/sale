@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import paths from "../routes/paths";
 import { useLocation, useParams } from "react-router-dom";
-import withOrg from "../hocs/with_org";
+import withUser from "../hocs/with_user";
 import { hasPin } from "../helpers/firestore_helpers";
 
 const PinProtectedPage = (props) => {
@@ -44,4 +44,4 @@ const PinProtectedPage = (props) => {
     return <span className="p-3">Loading ...</span>;
   }
 };
-export default withOrg(PinProtectedPage);
+export default withUser(PinProtectedPage);

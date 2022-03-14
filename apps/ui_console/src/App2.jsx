@@ -9,7 +9,7 @@ import FullLayout from "./components/full_layout";
 import withUser from "./hocs/with_user";
 import paths from "./routes/paths";
 
-const barePages = [paths.login];
+const barePages = [paths.login, paths.print_record_base];
 
 const App2 = (props) => {
   const [loading, setLoading] = useState(true);

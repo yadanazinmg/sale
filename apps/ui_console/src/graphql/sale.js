@@ -52,6 +52,7 @@ export const get_sale_by_id = gql`
       qty
       shop_id
       product_status
+      installment_at
       user_id
       user_name
       created_at
@@ -61,7 +62,7 @@ export const get_sale_by_id = gql`
 `;
 
 export const delete_sale = gql`
-  mutation Mutation($where: SaleRecordWhereUniqueInput!) {
+  mutation delete_sale($where: SaleRecordWhereUniqueInput!) {
     deleteSaleRecord(where: $where) {
       id
       voucher_no

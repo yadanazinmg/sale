@@ -55,9 +55,6 @@ const CreateInstallmentPage = (props) => {
           give_amount: {
             increment: plc.amount,
           },
-          installment_at: {
-            set: ldate,
-          },
           particular: {
             set: plc.particular,
           },
@@ -97,7 +94,10 @@ const CreateInstallmentPage = (props) => {
           },
         }).then((resp) => {
           console.log(resp);
-          SalePrint(plc, ldate);
+          // SalePrint(plc, ldate);
+
+          //navigate(paths.getPrintRecord(plc.id));
+          navigate(`/print_record/${plc.id}`);
         });
       })
       .catch((error) => {

@@ -14,6 +14,7 @@ import ReportPage from "../pages/report/report_page";
 import LoginPage from "../pages/login/login_page";
 
 import ProtectedPage from "./protected_page";
+//import PinProtectedPage from "./pin_protected_page";
 // import ResetPwd from "../pages/admin/reset_pwd";
 // import SpecialFunctions from "../pages/admin/special_functions";
 
@@ -23,6 +24,7 @@ import CreateSalePage from "../pages/sale_entry/new_sale_page";
 import EditSalePage from "../pages/sale_entry/edit_sale_page";
 
 import CreateInstallmentPage from "../pages/Installment/new_installment_page";
+import PrintPage from "../pages/print/print_page";
 
 export const AppRoutes = (props) => {
   return (
@@ -47,6 +49,7 @@ export const AppRoutes = (props) => {
         <Route path={paths.sale_edit} element={<ProtectedPage page={EditSalePage} />} />
 
         <Route path={paths.installment_create} element={<ProtectedPage page={CreateInstallmentPage} />} />
+        <Route path={paths.print_record} element={<ProtectedPage page={PrintPage} />} />
         <Route component={NotFound} />
       </Routes>
     </div>
