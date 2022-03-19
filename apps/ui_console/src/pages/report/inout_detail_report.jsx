@@ -15,6 +15,8 @@ import { get_parking_record_by_Time } from "../../graphql/parking_record";
 import { dateFormatter } from "../../helpers/ag_grid_helpers";
 import { DetailsExcelExport } from "../../helpers/excel_helper";
 import { get_exit_gate } from "../../graphql/gate";
+import { get_users } from "../../graphql/user";
+import { get_sales, get_sale_by_data } from "../../graphql/sale";
 
 // const dateFormatter = (params) => {
 //   return moment(params.value).format("DD/MM/YYYY");
@@ -24,25 +26,14 @@ const DetailReportPage = (props) => {
   const {
     loading: gloading,
     error,
-    data: gates,
+    data: users,
     refetch,
-  } = useQuery(get_exit_gate, {
+  } = useQuery(get_users, {
     pollInterval: 0,
     fetchPolicy: "network-only",
-    variables: {
-      where: {
-        gate_type: {
-          equals: "EXIT",
-        },
-      },
-      orderBy: [
-        {
-          name: "asc",
-        },
-      ],
-    },
   });
-  const [getTicketRecord, { loading: gqlLoading, data: ticketrecord }] = useLazyQuery(get_parking_record_by_Time, {
+
+  const [getTicketRecord, { loading: gqlLoading, data: ticketrecord }] = useLazyQuery(get_sale_by_data, {
     fetchPolicy: "network-only",
   });
 
@@ -56,63 +47,51 @@ const DetailReportPage = (props) => {
   const [vehicleid, setVehicleId] = useState();
   const [vehicleclass, SetVehicleClass] = useState();
   const [parkingtype, SetParkingType] = useState("0");
-  const [gate, SetGate] = useState();
+  const [selectuser, setSelectUser] = useState();
+  const [user, setUser] = useState();
   let [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleGet = () => {
     setParkingRecord([]);
-    console.log(vehicleclass);
-    console.log(parkingtype);
-    console.log(gate);
-    if (parkingtype === "2") {
+    if (vehicleclass === "0") {
       console.log("In parking 2");
       getTicketRecord({
         variables: {
           where: {
             AND: [
               {
-                vehicle_class: {
-                  equals: vehicleclass,
-                },
-                vehicle_id: {
-                  equals: vehicleid,
-                },
-                exit_gate_id: {
-                  equals: gate,
-                },
-                exit_time: {
-                  not: null,
+                created_at: {
                   gte: sdate,
                   lte: edate,
+                },
+                user_id: {
+                  equals: selectuser,
+                },
+                total_amount: {
+                  gt: 0,
                 },
               },
             ],
           },
         },
       });
-    } else if (parkingtype === "1") {
+    } else if (vehicleclass === "1") {
       console.log("In parking 1");
       getTicketRecord({
         variables: {
           where: {
             AND: [
               {
-                vehicle_class: {
-                  equals: vehicleclass,
-                },
-                vehicle_id: {
-                  equals: vehicleid,
-                },
-                entry_time: {
+                created_at: {
                   gte: sdate,
                   lte: edate,
                 },
-                exit_time: {
-                  equals: null,
+                user_id: {
+                  equals: selectuser,
                 },
-                exit_gate_id: {
-                  equals: gate,
+                total_amount: {
+                  equals: 0,
                 },
               },
             ],
@@ -120,31 +99,18 @@ const DetailReportPage = (props) => {
         },
       });
     } else {
+      console.log("In parking 1");
       getTicketRecord({
         variables: {
           where: {
-            OR: [
-              {
-                entry_time: {
-                  gte: sdate,
-                  lte: edate,
-                },
-                exit_time: {
-                  gte: sdate,
-                  lte: edate,
-                },
-              },
-            ],
             AND: [
               {
-                vehicle_class: {
-                  equals: vehicleclass,
+                created_at: {
+                  gte: sdate,
+                  lte: edate,
                 },
-                vehicle_id: {
-                  equals: vehicleid,
-                },
-                exit_gate_id: {
-                  equals: gate,
+                user_id: {
+                  equals: selectuser,
                 },
               },
             ],
@@ -169,13 +135,13 @@ const DetailReportPage = (props) => {
 
   const columnDefs = useMemo(
     () => [
-      { field: "vehicle_id", width: 100 },
-      { field: "vehicle_class", width: 100 },
-      { field: "entry_time", valueFormatter: dateFormatter },
-      { field: "exit_time", valueFormatter: dateFormatter },
-      { field: "shift_id" },
-      { field: "collected_amount" },
-      { field: "slip_number" },
+      { headerName: "ဘောင်ချာနံပါတ်", field: "voucher_no", width: 130 },
+      { headerName: "နေ့စွဲ", field: "created_at", width: 180, valueFormatter: dateFormatter },
+      { headerName: "ဝယ်သူအမည်", field: "customer", width: 130 },
+      { headerName: "နေရပ်", field: "address", width: 130 },
+      { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
+      { headerName: "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ", field: "installment_at", width: 180, valueFormatter: dateFormatter },
+      { headerName: "ကြွေးကျန်", field: "total_amount", width: 130 },
       // { field: "Doses", cellStyle: { textAlign: "center" }, width: 100, cellRendererFramework: doseLinkRenderer },
     ],
     []
@@ -199,28 +165,39 @@ const DetailReportPage = (props) => {
   };
 
   const handleExport = () => {
-    DetailsExcelExport(parkingrecord, sdate, edate, vehicleid, vehicleclass);
+    console.log(count);
+    console.log(totalprice);
+    DetailsExcelExport(parkingrecord, sdate, edate, count, totalprice);
   };
 
   useEffect(async () => {
     setLoading(gqlLoading);
     console.log(ticketrecord);
     if (!gqlLoading && ticketrecord) {
-      console.log(ticketrecord.parkingRecords);
-      setParkingRecord(ticketrecord.parkingRecords);
-      setCount(ticketrecord.parkingRecords.length);
-      const tmp = ticketrecord.parkingRecords;
+      console.log(ticketrecord.saleRecords);
+      setParkingRecord(ticketrecord.saleRecords);
+      setCount(ticketrecord.saleRecords.length);
+      const tmp = ticketrecord.saleRecords;
       console.log(tmp);
-      let total = tmp.reduce((a, c) => a + c.collected_amount, 0);
+      let total = tmp.reduce((a, c) => a + c.total_amount, 0);
       console.log(total);
       setTotalPrice(total);
     }
   }, [gqlLoading]);
 
+  useEffect(async () => {
+    setLoading(gloading);
+    console.log(users);
+    if (!gqlLoading && users) {
+      console.log(users.users);
+      setUser(users.users);
+    }
+  }, [gloading]);
+
   return (
     <div className="relative flex flex-col h-full">
       <div className="w-full flex flex-row py-1 place-content-center">
-        <span className="text-3xl font-semibold capitalize mb-2">Details Report</span>
+        <span className="text-3xl font-semibold capitalize mb-2">Sale Report</span>
       </div>
       <div className="w-full flex flex-wrap p-1 pb-2">
         <div className="flex flex-wrap">
@@ -231,11 +208,10 @@ const DetailReportPage = (props) => {
               placeholderText="From Time"
               selected={sdate}
               maxDate={new Date()}
-              showTimeSelect
               timeFormat="HH:mm"
               onChange={(date) => setsDate(date)}
               autoComplete="off"
-              dateFormat="dd/MM/yyyy HH:mm"
+              dateFormat="dd/MM/yyyy"
               enableCellTextSelection={true}
               className="input input-primary input-sm px-2 w-36"
             />
@@ -247,38 +223,26 @@ const DetailReportPage = (props) => {
               placeholderText="To Time"
               selected={edate}
               maxDate={new Date()}
-              showTimeSelect
               timeFormat="HH:mm"
               onChange={(date) => seteDate(date)}
               autoComplete="off"
-              dateFormat="dd/MM/yyyy HH:mm"
+              dateFormat="dd/MM/yyyy"
               className="input input-primary input-sm w-36"
             />
           </div>
           <div className="flex flex-nowrap mt-2">
             <select id="vehicle_class" className="select select-primary select-sm" onChange={(e) => SetVehicleClass(e.target.value)}>
-              <option value="">Entry Type</option>
+              <option value="">All</option>
               {VehicleClass.map((r) => (
                 <option value={r.value}>{r.label}</option>
               ))}
             </select>
           </div>
-          <div className="flex flex-nowrap mx-2 mt-2">
-            <select id="parking_type" className="select select-primary select-sm" onChange={(e) => SetParkingType(e.target.value)}>
-              <option value="">Parking Type</option>
-              {ParkingType.map((r) => (
-                <option value={r.value}>{r.label}</option>
-              ))}
-            </select>
-          </div>
           <div className="flex flex-nowrap mt-2">
-            <select id="gate" className="select select-primary select-sm" onChange={(e) => SetGate(e.target.value)}>
-              <option value="">Select Exit Gate</option>
-              {gates && gates.gates.map((r) => <option value={r.id}>{r.name}</option>)}
+            <select id="vehicle_class" className="select select-primary select-sm" onChange={(e) => setSelectUser(e.target.value)}>
+              <option value="">All</option>
+              {user && user.map((r) => <option value={r.id}>{r.name}</option>)}
             </select>
-          </div>
-          <div className="flex flex-nowrap mt-2">
-            <input className="input input-primary input-sm w-48" type="text" placeholder="Vehicle Id" onChange={handleVehicleId} />
           </div>
           <div className="flex flex-nowrap mx-2 mt-2">
             <button onClick={handleGet} className="p-2 w-20 btn btn-accent btn-sm">
@@ -291,8 +255,8 @@ const DetailReportPage = (props) => {
             </button>
           </div>
           <div className="flex flex-nowrap mx-2 mt-2">
-            <span className="pt-0 px-2 text-lg font-semibold w-38">Count: {count}</span>
-            <span className="pt-0 px-2 text-lg font-semibold w-48">Total Amount: {totalprice}</span>
+            <span className="pt-0 px-2 text-lg font-semibold w-auto">Count: {count}</span>
+            <span className="pt-0 px-2 text-lg font-semibold w-auto">Total Amount: {totalprice}</span>
           </div>
         </div>
       </div>
@@ -319,13 +283,9 @@ const DetailReportPage = (props) => {
   );
 };
 
-const ParkingType = [
-  { label: "Entry Only", value: 1 },
-  { label: "Fee Collected", value: 2 },
-];
 const VehicleClass = [
-  { label: "CAR", value: "CAR" },
-  { label: "MOTORCYCLE", value: "MOTORCYCLE" },
+  { label: "ကြွေးကျန်", value: "0" },
+  { label: "ကြွေးမကျန်", value: "1" },
 ];
 
 export default withUser(DetailReportPage);

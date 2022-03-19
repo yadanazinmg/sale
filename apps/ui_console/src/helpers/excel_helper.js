@@ -3,7 +3,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { durationCalculator, dateFormatterExcel } from "../helpers/date_helpers";
 
-export const DetailsExcelExport = async (parkingrecord, from, to, vehicleId, vehicleclass) => {
+export const DetailsExcelExport = async (parkingrecord, from, to, count, totalprice) => {
   console.log("in excel");
   try {
     const data = parkingrecord;
@@ -17,31 +17,29 @@ export const DetailsExcelExport = async (parkingrecord, from, to, vehicleId, veh
     workbook.modified = new Date();
     workbook.properties.date1904 = true;
     const sheet = workbook.addWorksheet("Detail");
-    sheet.addRow(["From", "To", "Vehicle Id", "Vehicle Class"]);
-    sheet.addRow([new Date(from), new Date(to), vehicleId, vehicleclass]);
+    sheet.addRow(["From", "To", "Total Count", "Total Amount"]);
+    sheet.addRow([new Date(from), new Date(to), count, totalprice]);
     sheet.addRow();
 
     const rowValues = [];
-    rowValues[1] = "Vehicle Id";
-    rowValues[2] = "Vehicle Class";
-    rowValues[3] = "Entry At";
-    rowValues[4] = "Exit At";
-    rowValues[5] = "Duration";
-    rowValues[6] = "Shift";
-    rowValues[7] = "Collected Amount";
-    rowValues[8] = "Slip Number";
+    rowValues[1] = "ဘောင်ချာနံပါတ်";
+    rowValues[2] = "နေ့စွဲ";
+    rowValues[3] = "ဝယ်သူအမည်";
+    rowValues[4] = "နေရပ်";
+    rowValues[5] = "ကြွေးဆပ်";
+    rowValues[6] = "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ";
+    rowValues[7] = "ကြွေးကျန်";
     sheet.addRow(rowValues);
 
     data.forEach((pr) => {
       const rowValues = [];
-      rowValues[1] = pr.vehicle_id;
-      rowValues[2] = pr.vehicle_class;
-      rowValues[3] = dateFormatterExcel(pr.entry_time);
-      rowValues[4] = dateFormatterExcel(pr.entry_time);
-      rowValues[5] = durationCalculator(pr.entry_at, pr.exit_at);
-      rowValues[6] = pr.shift_id;
-      rowValues[7] = pr.collected_amount;
-      rowValues[8] = pr.slip_number;
+      rowValues[1] = pr.voucher_no;
+      rowValues[2] = dateFormatterExcel(pr.created_at);
+      rowValues[3] = pr.customer;
+      rowValues[4] = pr.address;
+      rowValues[5] = pr.give_amount;
+      rowValues[6] = dateFormatterExcel(pr.installment_at);
+      rowValues[7] = pr.total_amount;
       sheet.addRow(rowValues);
     });
 

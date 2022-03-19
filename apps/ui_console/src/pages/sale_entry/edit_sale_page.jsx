@@ -8,6 +8,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import paths from "../../routes/paths";
 import withUser from "../../hocs/with_user";
 import { get_sale_by_id, update_sale } from "../../graphql/sale";
+import PicturePicker from "../../components/picture_picker";
+import ProgressBar from "../../controls/progress_bar";
+import axios from "axios";
 
 const formSchema = yup.object().shape({
   customer: yup.string().required("Gate Type is required."),
@@ -33,9 +36,31 @@ const EditSalePage = (props) => {
 
   const [changeSale] = useMutation(update_sale);
   let [loading, setLoading] = useState(true);
+  const [uploadProgress, setUploadProgress] = useState(50);
+  const [pictureUrl, setPictureUrl] = useState();
   const [sales, setSale] = useState();
 
   const handleSave = async (data) => {
+    const pdata = new FormData();
+    pdata.append("file", data.picture);
+    console.log(pdata);
+    if (data.picture) {
+      data.metadata = data.picture.name;
+      axios
+        .post("http://localhost:7000/upload", pdata, {
+          // receive two parameter endpoint url ,form data
+          onUploadProgress: (ProgressEvent) => {
+            // setLoaded((ProgressEvent.loaded / ProgressEvent.total) * 100);
+          },
+        })
+        .then((res) => {
+          // then print response status
+          console.log(res.statusText);
+        })
+        .catch((err) => {
+          //toast.error("upload fail");
+        });
+    }
     const plc = { ...data };
     console.log(plc);
 
@@ -66,6 +91,9 @@ const EditSalePage = (props) => {
           product_status: {
             set: plc.product_status,
           },
+          metadata: {
+            set: plc.metadata,
+          },
         },
         where: {
           id: saleid,
@@ -89,14 +117,31 @@ const EditSalePage = (props) => {
     e.preventDefault();
   };
 
-  if (sale) {
+  // if (sale) {
+  //   console.log(sale);
+  //   const sp = sale.saleRecord;
+
+  //   formData = {
+  //     ...sp,
+  //   };
+  // }
+
+  useEffect(async () => {
+    setLoading(gqlLoading);
     console.log(sale);
-    const sp = sale.saleRecord;
-    sp.installment_at = new Date(sp.installment_at);
-    formData = {
-      ...sp,
-    };
-  }
+    if (!gqlLoading && sale) {
+      const sp = sale.saleRecord;
+      sp.installment_at = new Date(sp.installment_at);
+      if (sp.metadata) {
+        setPictureUrl(`/dist/public/${sp.metadata}`);
+        sp.picture = null;
+      }
+      console.log(sp);
+      formData = {
+        ...sp,
+      };
+    }
+  }, [gqlLoading]);
 
   const EntryForm = () => {
     return (
@@ -105,6 +150,16 @@ const EditSalePage = (props) => {
           return (
             <Form autoComplete="off">
               <div className="form-control">
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">Photo</div>
+                  <div className="flex flex-row items-left align-middle">
+                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
+                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
+                      <ProgressBar className="p-2" percent={uploadProgress} />
+                      <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-nowrap">
                   <div className="w-48 p-2 m-2 label">ဘောင်ချာနံပါတ်</div>
                   <div className="p-2 m-2">

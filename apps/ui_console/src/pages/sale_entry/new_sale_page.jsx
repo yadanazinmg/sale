@@ -13,8 +13,9 @@ import PicturePicker from "../../components/picture_picker";
 import ProgressBar from "../../controls/progress_bar";
 import axios from "axios";
 const formSchema = yup.object().shape({
-  customer: yup.string().required("Gate Type is required."),
-  total_amount: yup.number().required("Gate Type is required."),
+  customer: yup.string().required("Customer is required."),
+  total_amount: yup.number().required("Amount is required."),
+  product_status: yup.string().required("Product Status is required."),
 });
 
 const formData = {
@@ -25,6 +26,7 @@ const formData = {
   net_amount: 0,
   product_status: null,
   particular: "",
+  metadata: "",
 };
 
 const CreateSalePage = (props) => {
@@ -68,8 +70,8 @@ const CreateSalePage = (props) => {
     const pdata = new FormData();
     pdata.append("file", data.picture);
     console.log(pdata);
-
     if (data.picture) {
+      data.metadata = data.picture.name;
       axios
         .post("http://localhost:7000/upload", pdata, {
           // receive two parameter endpoint url ,form data
@@ -85,12 +87,12 @@ const CreateSalePage = (props) => {
           //toast.error("upload fail");
         });
     }
-    return;
     const plc = { ...data };
     plc.net_amount = plc.total_amount;
     console.log(props.user.id);
     plc.user_name = props.user.name;
     plc.userId = props.user.id;
+
     let vno = 0;
     let vid = "";
     if (voucherno) {
@@ -112,6 +114,7 @@ const CreateSalePage = (props) => {
           user_name: plc.user_name,
           particular: plc.particular,
           installment_at: plc.installment_at,
+          metadata: plc.metadata,
           qty: plc.qty,
           user: {
             connect: {
@@ -143,7 +146,7 @@ const CreateSalePage = (props) => {
         //navigate(paths.sale);
       });
     });
-    navigate(-1);
+    //navigate(-1);
   };
 
   const handleBack = () => {
@@ -161,6 +164,16 @@ const CreateSalePage = (props) => {
           return (
             <Form autoComplete="off">
               <div className="form-control">
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">Photo</div>
+                  <div className="flex flex-col items-left align-middle">
+                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
+                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
+                      <ProgressBar className="p-2" percent={uploadProgress} />
+                      <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-nowrap">
                   <div className="w-48 p-2 m-2 label">ဘောင်ချာနံပါတ်</div>
                   <div className="p-2 m-2">
@@ -286,16 +299,7 @@ const CreateSalePage = (props) => {
                     </select>
                   </div>
                 </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Photo</div>
-                  <div className="flex flex-col items-left align-middle">
-                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-2 m-2" style={{ height: "200px", width: "200px" }}>
-                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
-                      <ProgressBar className="p-2" percent={uploadProgress} />
-                      <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
-                    </div>
-                  </div>
-                </div>
+
                 <div className="flex flex-nowrap p-3">
                   <button aria-label="back" onClick={handleBack} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn">
                     Back {/* <ArrowBackIcon className="text-yellow-700" fontSize="large" /> */}

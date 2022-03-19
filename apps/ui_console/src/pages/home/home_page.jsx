@@ -9,7 +9,7 @@ const HomePage = (props) => {
   return (
     <div className="p-2 flax flex-col h-full">
       <div className="flex flex-col h-[calc(100vh-85px)] justify-center items-center">
-        <img className="w-64 h-64" src={yadana}></img>
+        <img className="w-64 h-64" src={`/dist/public/${auth.user?.profile_picture}`}></img>
         <div className="font-semibold text-4xl p-2 pt-5"></div>
         <div className="font-semibold text-4xl p-1">Welcome.. {auth.user?.name}</div>
       </div>

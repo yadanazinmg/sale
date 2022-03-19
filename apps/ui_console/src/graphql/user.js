@@ -8,6 +8,7 @@ export const sing_in = gql`
         id
         name
         role
+        profile_picture
       }
     }
   }
@@ -38,6 +39,7 @@ export const get_user_by_Id = gql`
       role
       created_at
       updated_at
+      profile_picture
     }
   }
 `;

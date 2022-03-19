@@ -13,14 +13,27 @@ import paths from "../../routes/paths";
 import withUser from "../../hocs/with_user";
 import { get_parking_record_by_Time } from "../../graphql/parking_record";
 import { dateFormatter } from "../../helpers/ag_grid_helpers";
-import { AmountExcelExport, DetailsExcelExport } from "../../helpers/excel_helper";
+import { DetailsExcelExport } from "../../helpers/excel_helper";
+import { get_exit_gate } from "../../graphql/gate";
+import { get_users } from "../../graphql/user";
+import { get_sales, get_sale_by_data } from "../../graphql/sale";
 
 // const dateFormatter = (params) => {
 //   return moment(params.value).format("DD/MM/YYYY");
 // };
 
-const AmountReportPage = (props) => {
-  const [getTicketRecord, { loading: gqlLoading, data: ticketrecord }] = useLazyQuery(get_parking_record_by_Time, {
+const InstallmentReportPage = (props) => {
+  const {
+    loading: gloading,
+    error,
+    data: users,
+    refetch,
+  } = useQuery(get_users, {
+    pollInterval: 0,
+    fetchPolicy: "network-only",
+  });
+
+  const [getTicketRecord, { loading: gqlLoading, data: ticketrecord }] = useLazyQuery(get_sale_by_data, {
     fetchPolicy: "network-only",
   });
 
@@ -32,25 +45,79 @@ const AmountReportPage = (props) => {
   const [count, setCount] = useState(0);
   const [totalprice, setTotalPrice] = useState(0);
   const [vehicleid, setVehicleId] = useState();
+  const [vehicleclass, SetVehicleClass] = useState();
+  const [parkingtype, SetParkingType] = useState("0");
+  const [selectuser, setSelectUser] = useState();
+  const [user, setUser] = useState();
   let [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleGet = () => {
     setParkingRecord([]);
-    getTicketRecord({
-      variables: {
-        where: {
-          AND: [
-            {
-              exit_time: {
-                gte: sdate,
-                lte: edate,
+    if (vehicleclass === "0") {
+      console.log("In parking 2");
+      getTicketRecord({
+        variables: {
+          where: {
+            AND: [
+              {
+                created_at: {
+                  gte: sdate,
+                  lte: edate,
+                },
+                user_id: {
+                  equals: selectuser,
+                },
+                total_amount: {
+                  gt: 0,
+                },
               },
-            },
-          ],
+            ],
+          },
         },
-      },
-    });
+      });
+    } else if (vehicleclass === "1") {
+      console.log("In parking 1");
+      getTicketRecord({
+        variables: {
+          where: {
+            AND: [
+              {
+                created_at: {
+                  gte: sdate,
+                  lte: edate,
+                },
+                user_id: {
+                  equals: selectuser,
+                },
+                total_amount: {
+                  equals: 0,
+                },
+              },
+            ],
+          },
+        },
+      });
+    } else {
+      console.log("In parking 1");
+      getTicketRecord({
+        variables: {
+          where: {
+            AND: [
+              {
+                created_at: {
+                  gte: sdate,
+                  lte: edate,
+                },
+                user_id: {
+                  equals: selectuser,
+                },
+              },
+            ],
+          },
+        },
+      });
+    }
   };
 
   const handleVehicleId = (e) => {
@@ -68,12 +135,13 @@ const AmountReportPage = (props) => {
 
   const columnDefs = useMemo(
     () => [
-      { field: "collected_amount" },
-      { field: "count" },
-      { field: "amount" },
-      // { field: "shift_id" },
-      // { field: "collected_amount" },
-      // { field: "slip_number" },
+      { headerName: "ဘောင်ချာနံပါတ်", field: "voucher_no", width: 130 },
+      { headerName: "နေ့စွဲ", field: "created_at", width: 180, valueFormatter: dateFormatter },
+      { headerName: "ဝယ်သူအမည်", field: "customer", width: 130 },
+      { headerName: "နေရပ်", field: "address", width: 130 },
+      { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
+      { headerName: "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ", field: "installment_at", width: 180, valueFormatter: dateFormatter },
+      { headerName: "ကြွေးကျန်", field: "total_amount", width: 130 },
       // { field: "Doses", cellStyle: { textAlign: "center" }, width: 100, cellRendererFramework: doseLinkRenderer },
     ],
     []
@@ -97,100 +165,53 @@ const AmountReportPage = (props) => {
   };
 
   const handleExport = () => {
-    AmountExcelExport(parkingrecord, sdate, edate);
+    DetailsExcelExport(parkingrecord, sdate, edate, vehicleclass);
   };
 
   useEffect(async () => {
     setLoading(gqlLoading);
     console.log(ticketrecord);
     if (!gqlLoading && ticketrecord) {
-      console.log(ticketrecord.parkingRecords);
-      const tmp = ticketrecord.parkingRecords;
+      console.log(ticketrecord.saleRecords);
+      setParkingRecord(ticketrecord.saleRecords);
+      setCount(ticketrecord.saleRecords.length);
+      const tmp = ticketrecord.saleRecords;
       console.log(tmp);
-      if (tmp) {
-        let i = 0;
-        const reducer = (map, d) => {
-          let user = d.collected_amount;
-          console.log(user);
-          if (map[user]) {
-            let a = map[user];
-            a.collected_amount = user;
-            a.count += 1;
-            a.amount += d.collected_amount ? d.collected_amount : 0;
-            // a[i] = d;
-            i++;
-          } else {
-            map[user] = {
-              collected_amount: user,
-              count: 1,
-              amount: d.collected_amount ? d.collected_amount : 0,
-              // 9000001: d,
-            };
-          }
-          return map;
-        };
-
-        const obj = tmp.reduce(reducer, []);
-        const result = Object.values(obj);
-
-        let countsum = 0;
-        let amountsum = 0;
-        for (var j = 0; j < result.length; j++) {
-          countsum += result[j].count;
-          if (result[j].amount) amountsum += result[j].amount;
-        }
-        setTotalPrice(amountsum);
-        setCount(countsum);
-        result.push({
-          collected_amount: "Total",
-          count: countsum,
-          amount: amountsum,
-        });
-
-        console.log(obj);
-        console.log(result);
-        setParkingRecord(result);
-      }
+      let total = tmp.reduce((a, c) => a + c.total_amount, 0);
+      console.log(total);
+      setTotalPrice(total);
     }
   }, [gqlLoading]);
+
+  useEffect(async () => {
+    setLoading(gloading);
+    console.log(users);
+    if (!gqlLoading && users) {
+      console.log(users.users);
+      setUser(users.users);
+    }
+  }, [gloading]);
 
   return (
     <div className="relative flex flex-col h-full">
       <div className="w-full flex flex-row py-1 place-content-center">
-        <span className="text-3xl font-semibold capitalize mb-2">Amount Report</span>
+        <span className="text-3xl font-semibold capitalize mb-2">Sale Report</span>
       </div>
       <div className="w-full flex flex-wrap p-1 pb-2">
         <div className="flex flex-wrap">
           <div className="flex flex-nowrap mt-2">
-            <DatePicker
-              id="Time"
-              name="Time"
-              placeholderText="From Time"
-              selected={sdate}
-              maxDate={new Date()}
-              showTimeSelect
-              timeFormat="HH:mm"
-              onChange={(date) => setsDate(date)}
-              autoComplete="off"
-              dateFormat="dd/MM/yyyy HH:mm"
-              enableCellTextSelection={true}
-              className="input input-primary input-sm px-2 w-36"
-            />
+            <select id="vehicle_class" className="select select-primary select-sm" onChange={(e) => SetVehicleClass(e.target.value)}>
+              <option value="">All</option>
+              {VehicleClass.map((r) => (
+                <option value={r.value}>{r.label}</option>
+              ))}
+            </select>
           </div>
-          <div className="flex flex-nowrap mx-2 mt-2">
-            <DatePicker
-              id="Time"
-              name="Time2"
-              placeholderText="To Time"
-              selected={edate}
-              maxDate={new Date()}
-              showTimeSelect
-              timeFormat="HH:mm"
-              onChange={(date) => seteDate(date)}
-              autoComplete="off"
-              dateFormat="dd/MM/yyyy HH:mm"
-              className="input input-primary input-sm w-36"
-            />
+          <div className="flex flex-nowrap mt-2">
+            <select id="vehicle_class" className="select select-primary select-sm" onChange={(e) => setSelectUser(e.target.value)}>
+              <option value="">All</option>
+              {user && user.map((r) => <option value={r.id}>{r.name}</option>)}
+            </select>
           </div>
           <div className="flex flex-nowrap mx-2 mt-2">
             <button onClick={handleGet} className="p-2 w-20 btn btn-accent btn-sm">
@@ -203,8 +224,8 @@ const AmountReportPage = (props) => {
             </button>
           </div>
           <div className="flex flex-nowrap mx-2 mt-2">
-            <span className="pt-0 px-2 text-lg font-semibold w-48">Total Count: {count}</span>
-            <span className="pt-0 px-2 text-lg font-semibold w-48">Total Amount: {totalprice}</span>
+            <span className="pt-0 px-2 text-lg font-semibold w-auto">Count: {count}</span>
+            <span className="pt-0 px-2 text-lg font-semibold w-auto">Total Amount: {totalprice}</span>
           </div>
         </div>
       </div>
@@ -220,6 +241,7 @@ const AmountReportPage = (props) => {
           rowSelection="single"
           suppressRowClickSelection="true"
           rowData={parkingrecord}
+          enableCellTextSelection={true}
           // isExternalFilterPresent={isExternalFilterPresent}
           // doesExternalFilterPass={doesExternalFilterPass}
           onGridReady={onGridReady}
@@ -230,4 +252,9 @@ const AmountReportPage = (props) => {
   );
 };
 
-export default withUser(AmountReportPage);
+const VehicleClass = [
+  { label: "ကြွေးကျန်", value: "0" },
+  { label: "ကြွေးမကျန်", value: "1" },
+];
+
+export default withUser(InstallmentReportPage);

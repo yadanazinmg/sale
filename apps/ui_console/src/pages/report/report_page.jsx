@@ -47,15 +47,15 @@ const ReportPage = (props) => {
         <div className="flex flex-wrap p-2 mt-4 place-content-center w-full">
           <div>
             <button onClick={handleDetialReport} className="m-4 p-2 h-20 w-48 btn btn-primary">
-              Parking Record Detial
+              Sale Detail Report
             </button>
           </div>
           <div>
             <button onClick={handleAmountReport} className="m-4 p-2 h-20 w-48 btn btn-primary">
-              Parking Records by Amount
+              Installment Report
             </button>
           </div>
-          <div>
+          {/* <div>
             <button onClick={handleOperatorReport} className="m-4 p-2 h-20 w-48 btn btn-primary">
               Parking Records by Gate Operators
             </button>
@@ -74,7 +74,7 @@ const ReportPage = (props) => {
             <button onClick={handleHourClassReport} className="m-4 p-2 h-20 w-48 btn btn-primary">
               Parking Records by Hour
             </button>
-          </div>
+          </div> */}
           <LoadingIndicator loading={loading} color="#000099" />
         </div>
       </div>

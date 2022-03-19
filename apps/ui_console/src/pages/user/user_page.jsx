@@ -5,7 +5,7 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { AddUser, EditUser, DeleteUser, PinIcon, AddPerson } from "../../assets/icons/svg_icons";
+import { AddUser, EditUser, DeleteUser, PinIcon, AddPerson, GalleryIcon } from "../../assets/icons/svg_icons";
 import LoadingIndicator from "../../components/loading_indicator";
 import paths from "../../routes/paths";
 import DeleteConfirmationBox from "../../controls/delete_confirmation_box";
@@ -77,6 +77,10 @@ const UserPage = (props) => {
     navigate(paths.getUserUpdatePassword(id));
   };
 
+  const handlePictureEdit = (id) => {
+    navigate(paths.getUserPictureEdit(id));
+  };
+
   const handleTextChange = (e) => {
     console.log(e.target.value);
     gridApi.setQuickFilter(e.target.value);
@@ -87,14 +91,16 @@ const UserPage = (props) => {
   const rowActionsRenderer = (params) => {
     return (
       <div className="flex flex-row">
-        <div className="grid-btn-primary my-1" onClick={() => handleEdit(params.value)}>
+        <div className="grid-btn-primary mx-1 my-1" onClick={() => handleEdit(params.value)}>
           <EditUser className="w-8 h-8" />
         </div>
-
-        {/* <div className="grid-btn-secondary ml-2 my-1" onClick={() => handlePasswordChange(params.value)}>
-          <PinIcon className="w-8 h-8 bg-gray-500" />
+        {/* <div className="grid-btn-primary mx-1 my-1" onClick={() => handlePictureEdit(params.value)}>
+          <GalleryIcon className="w-8 h-8" />
         </div> */}
-        <label htmlFor="delete-confirm" className="grid-btn-important mx-2 my-1 modal-button" onClick={() => handleUserDelete(params.value, params.data.role)}>
+        <div className="grid-btn-secondary ml-2 my-1" onClick={() => handlePasswordChange(params.value)}>
+          <PinIcon className="w-8 h-8 bg-gray-500" />
+        </div>
+        <label htmlFor="delete-confirm" className="grid-btn-important mx-1 my-1 modal-button" onClick={() => handleUserDelete(params.value, params.data.role)}>
           <DeleteUser className="w-8 h-8" disabled={true} />
         </label>
       </div>
@@ -109,7 +115,7 @@ const UserPage = (props) => {
       { field: "role", width: 100 },
       { headerName: "Create Time", field: "created_at", width: 180, valueFormatter: dateFormatter },
       { headerName: "Update Time", field: "updated_at", width: 180, valueFormatter: dateFormatter },
-      { headerName: "Actions", width: 150, autoHeight: true, field: "id", cellRendererFramework: rowActionsRenderer },
+      { headerName: "Actions", width: 180, autoHeight: true, field: "id", cellRendererFramework: rowActionsRenderer },
     ],
     []
   );

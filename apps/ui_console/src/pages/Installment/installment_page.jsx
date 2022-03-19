@@ -7,15 +7,14 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import paths from "../../routes/paths";
-import { AddPerson, MoneyAddIcon, EditPerson, DeletePerson } from "../../assets/icons/svg_icons";
+import { AddPerson, MoneyAddIcon, EditPerson, DeletePerson, PrintIcon } from "../../assets/icons/svg_icons";
 import LoadingIndicator from "../../components/loading_indicator";
 import ComfirmationPopup from "../../controls/popup";
 import { dateFormatter } from "../../helpers/ag_grid_helpers";
 import { delete_sale, get_sales } from "../../graphql/sale";
 import DeleteConfirmationBox from "../../controls/delete_confirmation_box";
-import { delete_installments } from "../../graphql/installment";
 
-const SalePage = (props) => {
+const InstallmentPage = (props) => {
   const {
     loading: gqlLoading,
     error,
@@ -26,7 +25,6 @@ const SalePage = (props) => {
     fetchPolicy: "no-cache",
   });
   const [deleteSale] = useMutation(delete_sale);
-  const [deleteInstallment] = useMutation(delete_installments);
   const [gate, setGate] = useState([]);
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -56,14 +54,9 @@ const SalePage = (props) => {
   };
   const handleEdit = (id) => {
     console.log("edit", id);
-    navigate(paths.getSaleEdit(id));
+    navigate(`/print_record/${id}`);
+    // navigate(paths.getSaleEdit(id));
     //
-  };
-
-  const handleDelete = (id) => {
-    setDeleteId(id);
-    console.log("delete", id);
-    setPopup({ open: true });
   };
 
   const handleConfirmPopupClose = async (confirm) => {
@@ -79,15 +72,6 @@ const SalePage = (props) => {
           },
         }).then((resp) => {
           console.log(resp);
-          deleteInstallment({
-            variables: {
-              customer_id: {
-                equals: deleteId,
-              },
-            },
-          }).then((resp) => {
-            console.log(resp);
-          });
         });
         refetch();
       }
@@ -104,29 +88,13 @@ const SalePage = (props) => {
     //
   };
   const rowActionsRenderer = (params) => {
-    if (params.data.total_amount > 0) {
-      return (
-        <div className="flex flex-row">
-          <div className="grid-btn-primary mx-2 my-1" onClick={() => handleEdit(params.data.id)}>
-            <EditPerson className="w-8 h-8" />
-          </div>
-          <div className="grid-btn-primary mx-2 my-1" onClick={() => handleInstallment(params.data.id)}>
-            <MoneyAddIcon className="w-8 h-8" />
-          </div>
+    return (
+      <div className="flex flex-row">
+        <div className="grid-btn-primary mx-2 my-1" onClick={() => handleEdit(params.data.id)}>
+          <PrintIcon className="w-8 h-8" />
         </div>
-      );
-    } else {
-      return (
-        <div className="flex flex-row">
-          <div className="grid-btn-primary mx-2 my-1" onClick={() => handleEdit(params.data.id)}>
-            <EditPerson className="w-8 h-8" />
-          </div>
-          <label htmlFor="delete-confirm" className="grid-btn-important mx-2 my-1 modal-button bg-error" onClick={() => handleDelete(params.data.id)}>
-            <DeletePerson className="w-8 h-8" disabled={true} />
-          </label>
-        </div>
-      );
-    }
+      </div>
+    );
     //
   };
   const modules = useMemo(() => [ClientSideRowModelModule], []);
@@ -135,7 +103,7 @@ const SalePage = (props) => {
     () => [
       //{ field: "id", width: 300 },
       { headerName: "ဘောင်ချာနံပါတ်", field: "voucher_no", width: 130 },
-      { headerName: "နေ့စွဲ", field: "created_at", width: 180, valueFormatter: dateFormatter },
+      { headerName: "နေ့စွဲ", field: "updated_at", width: 180, valueFormatter: dateFormatter },
       { headerName: "ဝယ်သူအမည်", field: "customer", width: 130 },
       { headerName: "နေရပ်", field: "address", width: 130 },
       { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
@@ -194,11 +162,10 @@ const SalePage = (props) => {
           enableCellTextSelection={true}
           onGridReady={onGridReady}
         ></AgGridReact>
-        <DeleteConfirmationBox id="delete-confirm" onClose={handleConfirmPopupClose} />
       </div>
       <LoadingIndicator loading={loading} color="#000099" />
     </div>
   );
 };
 
-export default SalePage;
+export default InstallmentPage;

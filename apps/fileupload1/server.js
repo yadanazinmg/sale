@@ -7,7 +7,7 @@ app.use(cors());
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public");
+    cb(null, "D:\\AppTest\\sale\\apps\\ui_console\\dist\\public");
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);

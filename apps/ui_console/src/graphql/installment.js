@@ -7,3 +7,11 @@ export const create_installment = gql`
     }
   }
 `;
+
+export const delete_installments = gql`
+  mutation delete_installments($where: InstallmentRecordWhereInput) {
+    deleteManyInstallmentRecord(where: $where) {
+      count
+    }
+  }
+`;

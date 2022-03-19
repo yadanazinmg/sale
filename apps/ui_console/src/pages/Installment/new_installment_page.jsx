@@ -64,6 +64,9 @@ const CreateInstallmentPage = (props) => {
           product_status: {
             set: plc.product_status,
           },
+          updated_at: {
+            set: ldate,
+          },
         },
         where: {
           id: saleid,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import bcrypt from "bcryptjs";
+import moment from "moment";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 //import { nanoid } from "nanoid";
@@ -7,6 +8,9 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { create_app_user, create_user } from "../../graphql/user";
 import withUser from "../../hocs/with_user";
+import PicturePicker from "../../components/picture_picker";
+import ProgressBar from "../../controls/progress_bar";
+import axios from "axios";
 
 const formSchema = yup.object().shape({
   name: yup.string().required("Name is required."),
@@ -25,17 +29,53 @@ const formData = {
 };
 
 const CreateUserPage = (props) => {
-  const [addUser, { data }] = useMutation(create_app_user);
+  const [addUser, { data }] = useMutation(create_user);
+  const [uploadProgress, setUploadProgress] = useState(50);
+  const [user, setUser] = useState();
+  const [pictureUrl, setPictureUrl] = useState();
+  let [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const handleSave = async (data) => {
+    const pdata = new FormData();
+    pdata.append("file", data.picture);
+    console.log(pdata);
+    if (data.picture) {
+      data.profile_picture = data.picture.name;
+      axios
+        .post("http://localhost:7000/upload", pdata, {
+          // receive two parameter endpoint url ,form data
+          onUploadProgress: (ProgressEvent) => {
+            // setLoaded((ProgressEvent.loaded / ProgressEvent.total) * 100);
+          },
+        })
+        .then((res) => {
+          // then print response status
+          console.log(res.statusText);
+        })
+        .catch((err) => {
+          //toast.error("upload fail");
+        });
+    }
     console.log(data);
     const plc = { ...data };
+    //plc.updated_at = moment().toDate();
+    var salt = bcrypt.genSaltSync(10);
+    const pwd_hash = bcrypt.hashSync(plc.password, salt);
+    console.log(pwd_hash);
+    console.log(plc);
+    console.log(props);
     addUser({
       variables: {
-        name: plc.name,
-        pwd: plc.password,
-        role: plc.role,
+        data: {
+          name: plc.name,
+          role: plc.role,
+          active: true,
+          password: pwd_hash,
+          profile_picture: data.profile_picture,
+          // updated_at: plc.updated_at,
+        },
       },
     }).then((resp) => {
       console.log(resp);
@@ -58,6 +98,15 @@ const CreateUserPage = (props) => {
           return (
             <Form autoComplete="off">
               <div className="form-control">
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">Photo</div>
+                  <div className="flex flex-col items-left align-middle">
+                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
+                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
+                      <ProgressBar className="p-2" percent={uploadProgress} />
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-nowrap">
                   <div className="w-48 p-2 m-2 label">Name</div>
                   <div className="p-2 m-2 flex flex-col">

@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from "react";
-import bcrypt from "bcryptjs";
-import moment from "moment";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import "react-datepicker/dist/react-datepicker.css";
-import paths from "../../routes/paths";
 import withUser from "../../hocs/with_user";
-import { get_user_by_Id, update_app_user, update_user } from "../../graphql/user";
+import { get_user_by_Id, update_app_user } from "../../graphql/user";
+import paths from "../../routes/paths";
 import PicturePicker from "../../components/picture_picker";
 import ProgressBar from "../../controls/progress_bar";
 import axios from "axios";
 
-const formSchema = yup.object().shape({
-  name: yup.string().required("Name is required."),
-  role: yup.string().nullable().required("Role is required."),
-});
+const formSchema = yup.object().shape({});
 let formData = {};
-const EditUserPage = (props) => {
+const EditUserPicturePage = (props) => {
   const navigate = useNavigate();
   const { id: userId } = useParams();
+  const [uploadProgress, setUploadProgress] = useState(50);
+  const [user, setUser] = useState();
+  const [pictureUrl, setPictureUrl] = useState();
+  let [loading, setLoading] = useState(true);
+
   console.log(userId);
   const {
     loading: gqlLoading,
@@ -35,11 +35,7 @@ const EditUserPage = (props) => {
     pollInterval: 0,
   });
 
-  const [changeUser] = useMutation(update_user);
-  const [uploadProgress, setUploadProgress] = useState(50);
-  const [user, setUser] = useState();
-  const [pictureUrl, setPictureUrl] = useState();
-  const [loading, setLoading] = useState();
+  const [changeUser] = useMutation(update_app_user);
 
   const handleSave = async (data) => {
     const pdata = new FormData();
@@ -63,31 +59,13 @@ const EditUserPage = (props) => {
         });
     }
     const plc = { ...data };
-    var salt = bcrypt.genSaltSync(10);
-    const pwd_hash = bcrypt.hashSync(plc.password, salt);
-    console.log(pwd_hash);
-    plc.updated_at = moment().toDate();
     console.log(plc);
 
     changeUser({
       variables: {
-        data: {
-          name: {
-            set: plc.name,
-          },
-          role: {
-            set: plc.role,
-          },
-          profile_picture: {
-            set: plc.profile_picture,
-          },
-          updated_at: {
-            set: plc.updated_at,
-          },
-        },
-        where: {
-          id: userId,
-        },
+        updateAppUserId: userId,
+        name: plc.name,
+        profile_picture: plc.profile_picture,
       },
     })
       .then((resp) => {
@@ -98,6 +76,7 @@ const EditUserPage = (props) => {
         setUpdateError({ ...error, msg: error, show: true });
       });
     navigate(paths.user);
+    return;
   };
 
   const handleBack = () => {
@@ -111,15 +90,11 @@ const EditUserPage = (props) => {
   // if (data) {
   //   console.log(data);
   //   const sp = data.user;
-  //   if (sp.profile_picture) {
-  //     setPictureUrl(`dist/public/${sp.profile_picture}`);
-  //   }
   //   formData = {
   //     password: "",
   //     id: sp.id,
   //     name: sp.name,
   //     role: sp.role,
-  //     picture: null,
   //   };
   // }
   useEffect(async () => {
@@ -127,14 +102,13 @@ const EditUserPage = (props) => {
     console.log(users);
     if (!gqlLoading && users) {
       const sp = users.user;
-      if (sp.profile_picture) {
-        setPictureUrl(`/dist/public/${sp.profile_picture}`);
-        sp.picture = null;
-      }
       console.log(sp);
       formData = {
         ...sp,
       };
+      if (sp.profile_picture) {
+        setPictureUrl(`/public/${sp.profile_picture}`);
+      }
     }
   }, [gqlLoading]);
 
@@ -146,15 +120,6 @@ const EditUserPage = (props) => {
             <Form autoComplete="off">
               <div className="form-control">
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Photo</div>
-                  <div className="flex flex-col items-left align-middle">
-                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
-                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
-                      <ProgressBar className="p-2" percent={uploadProgress} />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
                   <div className="w-48 p-2 m-2 label">Name</div>
                   <div className="p-2 m-2 flex flex-col">
                     <Field
@@ -165,36 +130,19 @@ const EditUserPage = (props) => {
                       value={values.name}
                       onChange={handleChange}
                       className="input input-primary input-md"
+                      disabled
                     />
                     <ErrorMessage name="name" component="span" className="text-sm text-red-500 mx-2" />
                   </div>
                 </div>
-                {/* <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Password</div>
-                  <div className="p-2 m-2 flex flex-col">
-                    <Field
-                      type="text"
-                      id="password"
-                      name="password"
-                      placeholder="Password"
-                      value={values.password}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                    />
-                    <ErrorMessage name="password" component="span" className="text-sm text-red-500 mx-2" />
-                  </div>
-                </div> */}
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Role</div>
-                  <div className="p-2 m-2 flex flex-col">
-                    <select className="select select-primary" name="role" value={values.role} onChange={handleChange} onBlur={handleBlur}>
-                      <option value="">Select Role</option>
-                      {rowData.map((r) => (
-                        <option value={r.value}>{r.label}</option>
-                      ))}
-                    </select>
-                    <ErrorMessage name="role" component="span" className="text-sm text-red-500" />
-                    {/* <Field type="text" id="DoseType" name="DoseType" placeholder="DoseType" value={values.DoseType} onChange={handleChange} /> */}
+                  <div className="w-48 p-2 m-2 label">Photo</div>
+                  <div className="flex flex-col items-left align-middle">
+                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
+                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
+                      <ProgressBar className="p-2" percent={uploadProgress} />
+                      <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-nowrap p-3">
@@ -232,4 +180,4 @@ const rowData = [
   { label: "Redemption", value: "REDEMPTION" },
 ];
 
-export default withUser(EditUserPage);
+export default withUser(EditUserPicturePage);

@@ -4,10 +4,12 @@ const paths = {
   dose: "/dose",
 
   user_create: "/user_create",
+  user_picture_edit: "/user_picture_edit/:id",
   user_edit: "/user_edit/:id",
   getUserEdit: (id) => `/user_edit/${id}`,
   user_update_password: "/user_update_password/:id",
   getUserUpdatePassword: (id) => `/user_update_password/${id}`,
+  getUserPictureEdit: (id) => `/user_picture_edit/${id}`,
 
   report: "/report",
   login: "/login",

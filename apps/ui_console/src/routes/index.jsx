@@ -7,8 +7,9 @@ import HomePage from "../pages/home/home_page";
 
 import UserPage from "../pages/user/user_page";
 import CreateUserPage from "../pages/user/create_user_page";
+import UserPicturePage from "../pages/user/user_picture_page";
 import EditUserPage from "../pages/user/edit_user_page";
-// import UpdateUserPasswordPage from "../pages/user/update_user_password_page";
+import UpdateUserPasswordPage from "../pages/user/edit_user_pwd_page";
 
 import ReportPage from "../pages/report/report_page";
 import LoginPage from "../pages/login/login_page";
@@ -24,7 +25,10 @@ import CreateSalePage from "../pages/sale_entry/new_sale_page";
 import EditSalePage from "../pages/sale_entry/edit_sale_page";
 
 import CreateInstallmentPage from "../pages/Installment/new_installment_page";
+import InstallmentPage from "../pages/Installment/installment_page";
 import PrintPage from "../pages/print/print_page";
+
+import DetailReport from "../pages/report/inout_detail_report";
 
 export const AppRoutes = (props) => {
   return (
@@ -34,7 +38,9 @@ export const AppRoutes = (props) => {
         <Route path={paths.user} element={<ProtectedPage page={UserPage} />} />
         <Route path={paths.user_create} element={<ProtectedPage page={CreateUserPage} />} />
         <Route path={paths.user_edit} element={<ProtectedPage page={EditUserPage} />} />
-        {/* <Route path={paths.user_update_password} element={<ProtectedPage page={UpdateUserPasswordPage} />} /> */}
+        <Route path={paths.user_picture_edit} element={<ProtectedPage page={UserPicturePage} />} />
+
+        <Route path={paths.user_update_password} element={<ProtectedPage page={UpdateUserPasswordPage} />} />
         <Route path={paths.report} element={<ProtectedPage page={ReportPage} />} />
         <Route path={paths.login} element={<LoginPage />} />
 
@@ -49,7 +55,10 @@ export const AppRoutes = (props) => {
         <Route path={paths.sale_edit} element={<ProtectedPage page={EditSalePage} />} />
 
         <Route path={paths.installment_create} element={<ProtectedPage page={CreateInstallmentPage} />} />
+        <Route path={paths.installment} element={<ProtectedPage page={InstallmentPage} />} />
         <Route path={paths.print_record} element={<ProtectedPage page={PrintPage} />} />
+
+        <Route path={paths.inout_detail_report} element={<ProtectedPage page={DetailReport} />} />
         <Route component={NotFound} />
       </Routes>
     </div>

@@ -5,6 +5,7 @@ import {
   HCP,
   HomeIcon,
   LogoutIcon,
+  MoneyAddIcon,
   MoneyIcon,
   Patient,
   RedemptionIcon,
@@ -31,6 +32,12 @@ const menuData = [
     name: "User",
     link: paths.user,
     icon: User,
+    roles: ["ADMIN"],
+  },
+  {
+    name: "Installment",
+    link: paths.installment,
+    icon: MoneyAddIcon,
     roles: ["ADMIN"],
   },
   {
