@@ -142,7 +142,7 @@ const SalePage = (props) => {
     () => [
       //{ field: "id", width: 300 },
       { headerName: "ဘောင်ချာနံပါတ်", field: "voucher_no", width: 130 },
-      { headerName: "နေ့စွဲ", field: "created_at", width: 180, valueFormatter: dateFormatter },
+      { headerName: "နေ့စွဲ", field: "sale_date", width: 180, valueFormatter: dateFormatter },
       { headerName: "ဝယ်သူအမည်", field: "customer", width: 130 },
       { headerName: "နေရပ်", field: "address", width: 130 },
       { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },

@@ -25,6 +25,8 @@ export const get_sales = gql`
       updated_at
       installment_at
       customer_type
+      price
+      sale_date
       _count {
         installment_records
       }
@@ -69,6 +71,8 @@ export const get_sale_by_id = gql`
       updated_at
       customer_type
       metadata
+      price
+      sale_date
     }
   }
 `;
@@ -130,6 +134,7 @@ export const get_sale_by_data = gql`
       referral_phone
       customer_type
       price
+      sale_date
       _count {
         installment_records
       }

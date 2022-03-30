@@ -12,6 +12,7 @@ import paths from "../../routes/paths";
 import PicturePicker from "../../components/picture_picker";
 import ProgressBar from "../../controls/progress_bar";
 import axios from "axios";
+import { get_customers } from "../../graphql/customer";
 const formSchema = yup.object().shape({
   customer: yup.string().required("Customer is required."),
   total_amount: yup.number().required("Amount is required."),
@@ -22,8 +23,6 @@ const formData = {
   voucher_no: "",
   customer: "",
   address: "",
-  give_amount: 0,
-  net_amount: 0,
   product_status: null,
   particular: "",
   metadata: "",
@@ -46,12 +45,29 @@ const CreateSpecialSalePage = (props) => {
       },
     },
   });
+  const {
+    loading: sLoading,
+    error: serror,
+    data: customer,
+  } = useQuery(get_customers, {
+    variables: {
+      where: {
+        customer_type: {
+          equals: parseInt(0),
+        },
+      },
+    },
+    pollInterval: 0,
+    fetchPolicy: "no-cache",
+  });
   const [addGate, { data }] = useMutation(create_sale);
   const [updateVoucher] = useMutation(update_system_data);
   const [voucherno, setVoucherNo] = useState();
   let [loading, setLoading] = useState(true);
+  const [customers, setCustomer] = useState();
   const [uploadProgress, setUploadProgress] = useState(50);
   const [pictureUrl, setPictureUrl] = useState();
+  const [prices, setPrice] = useState();
   const navigate = useNavigate();
 
   useEffect(async () => {
@@ -64,6 +80,15 @@ const CreateSpecialSalePage = (props) => {
       setVoucherNo(gates.findManySystemData);
     }
   }, [gqlLoading]);
+
+  useEffect(async () => {
+    setLoading(sLoading);
+    console.log(customer);
+    if (!sLoading && customer) {
+      const ctm = customer.customers;
+      setCustomer(ctm);
+    }
+  }, [sLoading]);
 
   const handleSave = async (data) => {
     console.log(data);
@@ -100,13 +125,20 @@ const CreateSpecialSalePage = (props) => {
       vno = vno.toString();
       vid = voucherno[0].id;
     }
+    if (customers) {
+      let cus = customers.filter((c) => c.id == plc.customer);
+      plc.customer_id = plc.customer;
+      plc.customer = cus;
+    }
     console.log(plc);
     addGate({
       variables: {
         data: {
           voucher_no: plc.voucher_no,
-          customer: plc.customer,
+          customer: customer,
+          customer_id: plc.customer_id,
           address: plc.address,
+          price: plc.price,
           give_amount: plc.give_amount,
           total_amount: plc.total_amount,
           net_amount: plc.net_amount,
@@ -117,6 +149,7 @@ const CreateSpecialSalePage = (props) => {
           metadata: plc.metadata,
           phone: plc.phone,
           qty: plc.qty,
+          sale_date: plc.sale_date,
           customer_type: 1,
           user: {
             connect: {
@@ -159,189 +192,255 @@ const CreateSpecialSalePage = (props) => {
     e.preventDefault();
   };
 
-  const EntryForm = () => {
-    return (
-      <Formik initialValues={formData} enableReinitialize={true} onSubmit={handleSave} validationSchema={formSchema}>
-        {({ dirty, values, isValid, errors, touched, handleChange, handleSubmit, handleReset, setFieldValue }) => {
-          return (
-            <Form autoComplete="off">
-              <div className="form-control">
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Photo</div>
-                  <div className="flex flex-col items-left align-middle">
-                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
-                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
-                      <ProgressBar className="p-2" percent={uploadProgress} />
-                      <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ဘောင်ချာနံပါတ်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="voucher_no"
-                      name="voucher_no"
-                      placeholder="voucher_no"
-                      value={values.voucher_no}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                      disabled
-                    />
-                    <ErrorMessage name="voucher_no" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ဝယ်သူအမည်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="customer"
-                      name="customer"
-                      placeholder="customer"
-                      value={values.customer}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                    />
-                    <ErrorMessage name="customer" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">နေရပ်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="address"
-                      name="address"
-                      placeholder="address"
-                      value={values.address}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                    />
-                    <ErrorMessage name="address" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Phone</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="phone"
-                      name="phone"
-                      placeholder="phone"
-                      value={values.phone}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                    />
-                    <ErrorMessage name="phone" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ပစ္စည်းအမည်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="particular"
-                      name="particular"
-                      placeholder="particular"
-                      value={values.particular}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                    />
-                    <ErrorMessage name="particular" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">အရေအတွက်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="number"
-                      id="qty"
-                      name="qty"
-                      placeholder="qty"
-                      value={values.qty}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                    />
-                    <ErrorMessage name="qty" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ကြွေးကျန်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="number"
-                      id="total_amount"
-                      name="total_amount"
-                      placeholder="total_amount"
-                      value={values.total_amount}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                    />
-                    <ErrorMessage name="total_amount" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">နောက်ဆုံးကြွေးဆပ်နေ့စွဲ</div>
-                  <div className="p-2 m-2">
-                    <DatePicker
-                      id="installment_at"
-                      name="installment_at"
-                      selected={values.installment_at}
-                      // maxDate={new Date()}
-                      dateFormat="dd/MM/yyyy"
-                      onChange={(date) => setFieldValue("installment_at", date)}
-                      // onChangeRaw={handleDateChangeRaw}
-                      autoComplete="off"
-                      className="input input-primary input-md"
-                    />
-                    <ErrorMessage name="installment_at" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap w-auto">
-                  <div className="w-48 p-2 m-2 label">ပစ္စည်းယူ/မယူ</div>
-                  <div className="p-2 m-2">
-                    <select
-                      id="product_status"
-                      className="select select-primary w-full"
-                      name="product_status"
-                      value={values.product_status}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select</option>
-                      {ProductStatus.map((r) => (
-                        <option value={r.value}>{r.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex flex-nowrap p-3">
-                  <button aria-label="back" onClick={handleBack} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn">
-                    Back {/* <ArrowBackIcon className="text-yellow-700" fontSize="large" /> */}
-                  </button>
-                  <button type="submit" disabled={!dirty || !isValid} className="mx-1 lg:mx-6  py-3 h-12 w-24 btn btn-primary">
-                    Save
-                  </button>
-                  <button disabled={!dirty} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn btn-primary" onClick={handleReset}>
-                    Clear
-                  </button>
-                </div>
-                <LoadingIndicator loading={loading} color="#000099" />
-              </div>
-            </Form>
-          );
-        }}
-      </Formik>
-    );
+  const getAmount = (value) => {
+    let tm = 0;
+    console.log(value);
+    console.log(prices);
+    if (value) tm = parseInt(prices) - parseInt(value);
+    return tm;
   };
 
   return (
-    <div className="p-2 flex flex-col">
-      <div className="px-4 text-2xl font-bold">New Special Customer</div>
-      <EntryForm />
-    </div>
+    <Formik initialValues={formData} enableReinitialize={true} onSubmit={handleSave} validationSchema={formSchema}>
+      {({ dirty, values, isValid, errors, touched, handleChange, handleSubmit, handleReset, setFieldValue }) => {
+        return (
+          <Form autoComplete="off">
+            <div className="px-4 text-2xl font-bold">New Special Sale</div>
+            <div className="form-control">
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">Photo</div>
+                <div className="flex flex-col items-left align-middle">
+                  <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
+                    <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
+                    <ProgressBar className="p-2" percent={uploadProgress} />
+                    <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">ဘောင်ချာနံပါတ်</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="text"
+                    id="voucher_no"
+                    name="voucher_no"
+                    placeholder="voucher_no"
+                    value={values.voucher_no}
+                    onChange={handleChange}
+                    className="input input-primary input-md"
+                    disabled
+                  />
+                  <ErrorMessage name="voucher_no" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">ဝယ်သူအမည်</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="text"
+                    id="customer"
+                    name="customer"
+                    placeholder="customer"
+                    value={values.customer}
+                    onChange={handleChange}
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="customer" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap w-auto">
+                <div className="w-48 p-2 m-2 label">ဝယ်သူအမည်</div>
+                <div className="p-2 m-2">
+                  <select id="customer" className="select select-primary w-full" name="customer" value={values.customer} onChange={handleChange}>
+                    <option value="">Select</option>
+                    {customers && customers.map((r) => <option value={r.id}>{r.name}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">နေရပ်</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="text"
+                    id="address"
+                    name="address"
+                    placeholder="address"
+                    value={values.address}
+                    onChange={handleChange}
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="address" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">Phone</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    placeholder="phone"
+                    value={values.phone}
+                    onChange={handleChange}
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="phone" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">ပစ္စည်းအမည်</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="text"
+                    id="particular"
+                    name="particular"
+                    placeholder="particular"
+                    value={values.particular}
+                    onChange={handleChange}
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="particular" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">အရေအတွက်</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="number"
+                    id="qty"
+                    name="qty"
+                    placeholder="qty"
+                    value={values.qty}
+                    onChange={handleChange}
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="qty" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">Price</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="number"
+                    id="price"
+                    name="price"
+                    placeholder="price"
+                    value={values.price}
+                    onChange={(e) => {
+                      setPrice(e.target.value);
+                      setFieldValue("price", e.target.value);
+                    }}
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="price" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">ပေးငွေ</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="number"
+                    id="give_amount"
+                    name="give_amount"
+                    placeholder="give_amount"
+                    value={values.give_amount}
+                    onChange={(e) => {
+                      let tm = getAmount(e.target.value);
+                      console.log(tm);
+                      setFieldValue("give_amount", e.target.value);
+                      setFieldValue("total_amount", tm);
+                    }}
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="give_amount" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">ကြွေးကျန်</div>
+                <div className="p-2 m-2">
+                  <Field
+                    type="number"
+                    id="total_amount"
+                    name="total_amount"
+                    placeholder="total_amount"
+                    value={values.total_amount}
+                    onChange={handleChange}
+                    className="input input-primary input-md"
+                    disabled
+                  />
+                  <ErrorMessage name="total_amount" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">နေ့စွဲ</div>
+                <div className="p-2 m-2">
+                  <DatePicker
+                    id="sale_date"
+                    name="sale_date"
+                    selected={values.sale_date}
+                    // maxDate={new Date()}
+                    dateFormat="dd/MM/yyyy"
+                    onChange={(date) => setFieldValue("sale_date", date)}
+                    // onChangeRaw={handleDateChangeRaw}
+                    autoComplete="off"
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="sale_date" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-48 p-2 m-2 label">နောက်ဆုံးကြွေးဆပ်နေ့စွဲ</div>
+                <div className="p-2 m-2">
+                  <DatePicker
+                    id="installment_at"
+                    name="installment_at"
+                    selected={values.installment_at}
+                    // maxDate={new Date()}
+                    dateFormat="dd/MM/yyyy"
+                    onChange={(date) => setFieldValue("installment_at", date)}
+                    // onChangeRaw={handleDateChangeRaw}
+                    autoComplete="off"
+                    className="input input-primary input-md"
+                  />
+                  <ErrorMessage name="installment_at" component="span" className="text-sm text-red-500 px-2" />
+                </div>
+              </div>
+
+              <div className="flex flex-nowrap w-auto">
+                <div className="w-48 p-2 m-2 label">ပစ္စည်းယူ/မယူ</div>
+                <div className="p-2 m-2">
+                  <select
+                    id="product_status"
+                    className="select select-primary w-full"
+                    name="product_status"
+                    value={values.product_status}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select</option>
+                    {ProductStatus.map((r) => (
+                      <option value={r.value}>{r.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex flex-nowrap p-3">
+                <button aria-label="back" onClick={handleBack} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn">
+                  Back {/* <ArrowBackIcon className="text-yellow-700" fontSize="large" /> */}
+                </button>
+                <button type="submit" disabled={!dirty || !isValid} className="mx-1 lg:mx-6  py-3 h-12 w-24 btn btn-primary">
+                  Save
+                </button>
+                <button disabled={!dirty} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn btn-primary" onClick={handleReset}>
+                  Clear
+                </button>
+              </div>
+              <LoadingIndicator loading={loading} color="#000099" />
+            </div>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 };
 

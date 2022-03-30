@@ -14,26 +14,26 @@ import { dateFormatter } from "../../helpers/ag_grid_helpers";
 import { delete_sale, get_sales } from "../../graphql/sale";
 import DeleteConfirmationBox from "../../controls/delete_confirmation_box";
 import { delete_installments } from "../../graphql/installment";
+import { delete_customer, get_customers } from "../../graphql/customer";
 
-const SpecialSalePage = (props) => {
+const CustomerPage = (props) => {
   const {
     loading: gqlLoading,
     error,
     data: ticketTypes,
     refetch,
-  } = useQuery(get_sales, {
+  } = useQuery(get_customers, {
     variables: {
       where: {
         customer_type: {
-          equals: 1,
+          equals: parseInt(0),
         },
       },
     },
     pollInterval: 0,
     fetchPolicy: "no-cache",
   });
-  const [deleteSale] = useMutation(delete_sale);
-  const [deleteInstallment] = useMutation(delete_installments);
+  const [deleteSale] = useMutation(delete_customer);
   const [gate, setGate] = useState([]);
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -52,18 +52,18 @@ const SpecialSalePage = (props) => {
     setLoading(gqlLoading);
     console.log(ticketTypes);
     if (!gqlLoading && ticketTypes) {
-      setGate(ticketTypes.saleRecords);
-      setRowCount(ticketTypes.saleRecords.length);
+      setGate(ticketTypes.customers);
+      setRowCount(ticketTypes.customers.length);
     }
   }, [gqlLoading]);
 
   const handleCreate = () => {
     console.log("create");
-    navigate(paths.special_sale_create);
+    navigate(paths.customer_create);
   };
   const handleEdit = (id) => {
     console.log("edit", id);
-    navigate(paths.getSaleEdit(id));
+    navigate(paths.getCustomerEdit(id));
     //
   };
 
@@ -86,23 +86,10 @@ const SpecialSalePage = (props) => {
           },
         }).then((resp) => {
           console.log(resp);
-          deleteInstallment({
-            variables: {
-              customer_id: {
-                equals: deleteId,
-              },
-            },
-          }).then((resp) => {
-            console.log(resp);
-          });
         });
         refetch();
       }
     }
-  };
-
-  const handleInstallment = (id) => {
-    navigate(`/installment_create/${id}`);
   };
 
   const handleTextChange = (e) => {
@@ -111,29 +98,16 @@ const SpecialSalePage = (props) => {
     //
   };
   const rowActionsRenderer = (params) => {
-    if (params.data.total_amount > 0) {
-      return (
-        <div className="flex flex-row">
-          <div className="grid-btn-primary mx-2 my-1" onClick={() => handleEdit(params.data.id)}>
-            <EditPerson className="w-8 h-8" />
-          </div>
-          <div className="grid-btn-primary mx-2 my-1" onClick={() => handleInstallment(params.data.id)}>
-            <MoneyAddIcon className="w-8 h-8" />
-          </div>
+    return (
+      <div className="flex flex-row">
+        <div className="grid-btn-primary mx-2 my-1" onClick={() => handleEdit(params.data.id)}>
+          <EditPerson className="w-8 h-8" />
         </div>
-      );
-    } else {
-      return (
-        <div className="flex flex-row">
-          <div className="grid-btn-primary mx-2 my-1" onClick={() => handleEdit(params.data.id)}>
-            <EditPerson className="w-8 h-8" />
-          </div>
-          <label htmlFor="delete-confirm" className="grid-btn-important mx-2 my-1 modal-button bg-error" onClick={() => handleDelete(params.data.id)}>
-            <DeletePerson className="w-8 h-8" disabled={true} />
-          </label>
-        </div>
-      );
-    }
+        <label htmlFor="delete-confirm" className="grid-btn-important mx-2 my-1 modal-button bg-error" onClick={() => handleDelete(params.data.id)}>
+          <DeletePerson className="w-8 h-8" disabled={true} />
+        </label>
+      </div>
+    );
     //
   };
   const modules = useMemo(() => [ClientSideRowModelModule], []);
@@ -141,13 +115,10 @@ const SpecialSalePage = (props) => {
   const columnDefs = useMemo(
     () => [
       //{ field: "id", width: 300 },
-      { headerName: "ဘောင်ချာနံပါတ်", field: "voucher_no", width: 130 },
-      { headerName: "နေ့စွဲ", field: "sale_date", width: 180, valueFormatter: dateFormatter },
-      { headerName: "ဝယ်သူအမည်", field: "customer", width: 130 },
+      { headerName: "ဝယ်သူအမည်", field: "name", width: 130 },
       { headerName: "နေရပ်", field: "address", width: 130 },
-      { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
-      { headerName: "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ", field: "installment_at", width: 180, valueFormatter: dateFormatter },
-      { headerName: "ကြွေးကျန်", field: "total_amount", width: 130 },
+      { headerName: "phone", field: "phone", width: 130 },
+      { headerName: "Total Amount", field: "total_amount", width: 130 },
       { headerName: "Actions", width: 150, autoHeight: true, cellRendererFramework: rowActionsRenderer },
     ],
     []
@@ -167,7 +138,7 @@ const SpecialSalePage = (props) => {
   return (
     <div className="relative flex flex-col h-full">
       <div className="w-full flex flex-row px-6 py-0 lg:hidden place-content-center">
-        <span className="text-3xl font-semibold capitalize ">Special Sale</span>
+        <span className="text-3xl font-semibold capitalize ">Customer</span>
       </div>
       <div className="w-full grid lg:grid-cols-3 grid-cols-1 px-4 py-2 justify-between">
         <div className="flex flex-row">
@@ -180,7 +151,7 @@ const SpecialSalePage = (props) => {
           </div>
         </div>
         <div className="px-6 py-2 hidden lg:flex place-content-center">
-          <span className="px-2 text-3xl font-semibold capitalize ">Special Sale</span>
+          <span className="px-2 text-3xl font-semibold capitalize ">Customer</span>
         </div>
         <div className="w-full flex flex-row py-1 lg:place-content-center place-content-end">
           <span className="pt-2 pr-2 text-lg">Count :</span>
@@ -208,4 +179,4 @@ const SpecialSalePage = (props) => {
   );
 };
 
-export default SpecialSalePage;
+export default CustomerPage;

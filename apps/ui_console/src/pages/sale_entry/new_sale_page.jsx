@@ -117,6 +117,8 @@ const CreateSalePage = (props) => {
           metadata: plc.metadata,
           phone: plc.phone,
           qty: plc.qty,
+          sale_date: plc.sale_date,
+          price: plc.price,
           customer_type: 0,
           user: {
             connect: {
@@ -157,6 +159,14 @@ const CreateSalePage = (props) => {
 
   const handleDateChangeRaw = (e) => {
     e.preventDefault();
+  };
+
+  const getAmount = (value) => {
+    let tm = 0;
+    console.log(value);
+    console.log(prices);
+    if (value) tm = parseInt(prices) - parseInt(value);
+    return tm;
   };
 
   const EntryForm = () => {
@@ -268,6 +278,44 @@ const CreateSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">Price</div>
+                  <div className="p-2 m-2">
+                    <Field
+                      type="number"
+                      id="price"
+                      name="price"
+                      placeholder="price"
+                      value={values.price}
+                      onChange={(e) => {
+                        setPrice(e.target.value);
+                        setFieldValue("price", e.target.value);
+                      }}
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="price" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">ပေးငွေ</div>
+                  <div className="p-2 m-2">
+                    <Field
+                      type="number"
+                      id="give_amount"
+                      name="give_amount"
+                      placeholder="give_amount"
+                      value={values.give_amount}
+                      onChange={(e) => {
+                        let tm = getAmount(e.target.value);
+                        console.log(tm);
+                        setFieldValue("give_amount", e.target.value);
+                        setFieldValue("total_amount", tm);
+                      }}
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="give_amount" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
                   <div className="w-48 p-2 m-2 label">ကြွေးကျန်</div>
                   <div className="p-2 m-2">
                     <Field
@@ -278,8 +326,26 @@ const CreateSalePage = (props) => {
                       value={values.total_amount}
                       onChange={handleChange}
                       className="input input-primary input-md"
+                      disabled
                     />
                     <ErrorMessage name="total_amount" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">နေ့စွဲ</div>
+                  <div className="p-2 m-2">
+                    <DatePicker
+                      id="sale_date"
+                      name="sale_date"
+                      selected={values.sale_date}
+                      // maxDate={new Date()}
+                      dateFormat="dd/MM/yyyy"
+                      onChange={(date) => setFieldValue("sale_date", date)}
+                      // onChangeRaw={handleDateChangeRaw}
+                      autoComplete="off"
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="sale_date" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
@@ -339,7 +405,7 @@ const CreateSalePage = (props) => {
 
   return (
     <div className="p-2 flex flex-col">
-      <div className="px-4 text-2xl font-bold">New Customer</div>
+      <div className="px-4 text-2xl font-bold">New Sale</div>
       <EntryForm />
     </div>
   );

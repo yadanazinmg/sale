@@ -36,8 +36,8 @@ model item {
 model customer {
   id String @id @default(cuid())
   name String  @db.VarChar(255)
-  address String @db.VarChar(255)
-  Phone String @db.VarChar(255)
+  address String? @db.VarChar(255)
+  Phone String? @db.VarChar(255)
   total_amount Int?
   description String @db.VarChar(255)
   created_at DateTime @default(now())
@@ -66,6 +66,7 @@ model saleRecord {
   id String @id @default(cuid())
   voucher_no String @db.VarChar(255)
   customer String @db.VarChar(255)
+  customer_id String? @db.VarChar(255)
   address String? @db.VarChar(255)
   give_amount Int?
   total_amount Int
@@ -90,6 +91,7 @@ model saleRecord {
   referral_phone String?
   price Int?
   customer_type Int?
+  sale_date DateTime?
 
   @@map("sale_records")
 }

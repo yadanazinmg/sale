@@ -55,6 +55,9 @@ const CreateInstallmentPage = (props) => {
           give_amount: {
             increment: plc.amount,
           },
+          net_amount: {
+            set: plc.amount,
+          },
           particular: {
             set: plc.particular,
           },

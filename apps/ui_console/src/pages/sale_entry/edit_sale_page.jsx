@@ -88,6 +88,9 @@ const EditSalePage = (props) => {
           qty: {
             set: plc.qty,
           },
+          price: {
+            set: plc.price,
+          },
           product_status: {
             set: plc.product_status,
           },
@@ -97,6 +100,9 @@ const EditSalePage = (props) => {
           metadata: {
             set: plc.metadata,
           },
+          sale_date: {
+            set: plc.sale_date,
+          },
         },
         where: {
           id: saleid,
@@ -105,7 +111,6 @@ const EditSalePage = (props) => {
     })
       .then((resp) => {
         console.log(resp);
-        navigate(paths.sale);
       })
       .catch((error) => {
         setUpdateError({ ...error, msg: error, show: true });
@@ -118,6 +123,14 @@ const EditSalePage = (props) => {
 
   const handleDateChangeRaw = (e) => {
     e.preventDefault();
+  };
+
+  const getAmount = (value) => {
+    let tm = 0;
+    console.log(value);
+    console.log(prices);
+    if (value) tm = parseInt(prices) - parseInt(value);
+    return tm;
   };
 
   // if (sale) {
@@ -135,6 +148,7 @@ const EditSalePage = (props) => {
     if (!gqlLoading && sale) {
       const sp = sale.saleRecord;
       sp.installment_at = new Date(sp.installment_at);
+      sp.sale_date = new Date(sp.sale_date);
       if (sp.metadata) {
         setPictureUrl(`/ui_console/public/${sp.metadata}`);
         sp.picture = null;
@@ -255,6 +269,44 @@ const EditSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">Price</div>
+                  <div className="p-2 m-2">
+                    <Field
+                      type="number"
+                      id="price"
+                      name="price"
+                      placeholder="price"
+                      value={values.price}
+                      onChange={(e) => {
+                        setPrice(e.target.value);
+                        setFieldValue("price", e.target.value);
+                      }}
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="price" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">ပေးငွေ</div>
+                  <div className="p-2 m-2">
+                    <Field
+                      type="number"
+                      id="give_amount"
+                      name="give_amount"
+                      placeholder="give_amount"
+                      value={values.give_amount}
+                      onChange={(e) => {
+                        let tm = getAmount(e.target.value);
+                        console.log(tm);
+                        setFieldValue("give_amount", e.target.value);
+                        setFieldValue("total_amount", tm);
+                      }}
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="give_amount" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
                   <div className="w-48 p-2 m-2 label">ကြွေးကျန်</div>
                   <div className="p-2 m-2">
                     <Field
@@ -265,8 +317,26 @@ const EditSalePage = (props) => {
                       value={values.total_amount}
                       onChange={handleChange}
                       className="input input-primary input-md"
+                      disabled
                     />
                     <ErrorMessage name="total_amount" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">နေ့စွဲ</div>
+                  <div className="p-2 m-2">
+                    <DatePicker
+                      id="sale_date"
+                      name="sale_date"
+                      selected={values.sale_date}
+                      // maxDate={new Date()}
+                      dateFormat="dd/MM/yyyy"
+                      onChange={(date) => setFieldValue("sale_date", date)}
+                      // onChangeRaw={handleDateChangeRaw}
+                      autoComplete="off"
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="sale_date" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap">

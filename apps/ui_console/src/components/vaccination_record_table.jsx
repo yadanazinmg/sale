@@ -50,6 +50,21 @@ const VaccinationRecordTable = (props) => {
           <div className=" flex flex-col">
             <div className=" flex flex-row border-l-2 border-gray-500">
               <div className="flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
+                <span className=" w-40 border-gray-500 text-sm font-bold border-r-2">အမည်</span>
+                <span className=" w-60 border-gray-500">{sales.customer}</span>
+              </div>
+              <div className="flex flex-row text-center  border-gray-500  bg-opacity-80">
+                {" "}
+                <span className="w-36 border-gray-500  border-r-2"></span>
+              </div>
+
+              <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
+                <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">နေ့စွဲ </span>
+                <span className="mr-2 w-60 border-gray-500">{getDateString(sales.updated_at)}</span>
+              </div>
+            </div>
+            <div className=" flex flex-row border-l-2 border-gray-500">
+              <div className="flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className=" w-40 border-gray-500 text-sm font-bold border-r-2">နေရပ်</span>
                 <span className=" w-60 border-gray-500">{sales.address}</span>
               </div>
@@ -66,7 +81,7 @@ const VaccinationRecordTable = (props) => {
             <div className=" flex flex-row border-l-2 border-gray-500">
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="w-40 border-gray-500 text-sm font-bold border-r-2">ဖုန်းနံပါတ်</span>
-                <span className="w-60 border-gray-500">{sales.metadata}</span>
+                <span className="w-60 border-gray-500">{sales.phone}</span>
               </div>
               <div className="flex flex-row text-center  border-gray-500  bg-opacity-80">
                 {" "}
@@ -119,7 +134,7 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className=" flex flex-row col-span-2 text-center  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="w-44 border-gray-500 border-r-2">{sales.total_amount} </span>
+                <span className="w-44 border-gray-500 border-r-2">{sales.price} </span>
                 <span className="mr-2 w-60 border-gray-500">{sales.total_amount} </span>
               </div>
             </div>
@@ -135,7 +150,7 @@ const VaccinationRecordTable = (props) => {
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">စုစုပေါင်း </span>
-                <span className="mr-2 w-60 border-gray-500">{sales.give_amount} </span>
+                <span className="mr-2 w-60 border-gray-500">{sales.total_amount} </span>
               </div>
             </div>
             <div className="flex flex-row border-l-2  border-l-transparent  border-gray-500">
@@ -165,7 +180,7 @@ const VaccinationRecordTable = (props) => {
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">ပေးငွေ </span>
-                <span className="mr-2 w-60 border-gray-500">{sales.give_amount} </span>
+                <span className="mr-2 w-60 border-gray-500">{sales.net_amount} </span>
               </div>
             </div>
             <div className=" mb-2 flex flex-row border-l-2  border-l-transparent border-gray-500">
@@ -198,6 +213,46 @@ const VaccinationRecordTable = (props) => {
                 </div>
               </div>
             )}
+            <div className=" mt-12 flex flex-row  border-l-transparent ">
+              <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
+                <span className=" w-96 text-sm rounded-full">ရောင်းသူလက်မှတ်_ _ _ _ _ _ _ _ _ _ _ _</span>
+              </div>
+              <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
+                {" "}
+                <span className="w-36 border-gray-500 "></span>
+              </div>
+
+              <div className="flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
+                <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
+                  <span className=" w-16 border-gray-500 "></span>
+                  <span className=" w-80 text-sm rounded-full">ဝယ်သူလက်မှတ်_ _ _ _ _ _ _ _ _ _ _ _</span>
+                </div>
+                <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
+                  {" "}
+                  <span className="w-36 border-gray-500 "></span>
+                </div>
+              </div>
+            </div>
+            <div className=" mt-4 flex flex-row  border-l-transparent ">
+              <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
+                <span className=" w-96 text-sm rounded-full">ရောင်းသူအမည်_ _ _ _ _ _ _ _ _ _ _ _ _ _</span>
+              </div>
+              <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
+                {" "}
+                <span className="w-36 border-gray-500 "></span>
+              </div>
+
+              <div className="flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
+                <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
+                  <span className=" w-16 border-gray-500 "></span>
+                  <span className="w-80 text-sm rounded-full">ဝယ်သူအမည်_ _ _ _ _ _ _ _ _ _ _ _ _ _</span>
+                </div>
+                <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
+                  {" "}
+                  <span className="w-36 border-gray-500 "></span>
+                </div>
+              </div>
+            </div>
           </div>
         </>
       )}

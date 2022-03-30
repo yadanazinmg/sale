@@ -75,6 +75,11 @@ const paths = {
   print_record_base: "/print_record/",
   print_record: "/print_record/:id",
   getPrintRecord: (id) => `/print_record/${id}`,
+
+  customer: "/customer",
+  customer_create: "/customer_create",
+  customer_edit: "/customer_edit/:id",
+  getCustomerEdit: (id) => `/customer_edit/${id}`,
 };
 
 export default paths;
