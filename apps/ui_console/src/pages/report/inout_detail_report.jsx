@@ -48,11 +48,17 @@ const DetailReportPage = (props) => {
   const [vehicleclass, SetVehicleClass] = useState();
   const [parkingtype, SetParkingType] = useState("0");
   const [selectuser, setSelectUser] = useState();
+  const [selectctype, setCtype] = useState();
   const [user, setUser] = useState();
   let [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleGet = () => {
+    var itg = 0;
+    if (selectctype) {
+      itg = parseInt(selectctype);
+    }
+    console.log(itg);
     setParkingRecord([]);
     if (vehicleclass === "0") {
       console.log("In parking 2");
@@ -71,13 +77,18 @@ const DetailReportPage = (props) => {
                 total_amount: {
                   gt: 0,
                 },
+                customer: {
+                  equals: vehicleid,
+                },
+                customer_type: {
+                  equals: itg,
+                },
               },
             ],
           },
         },
       });
     } else if (vehicleclass === "1") {
-      console.log("In parking 1");
       getTicketRecord({
         variables: {
           where: {
@@ -86,6 +97,9 @@ const DetailReportPage = (props) => {
                 created_at: {
                   gte: sdate,
                   lte: edate,
+                },
+                customer: {
+                  equals: vehicleid,
                 },
                 user_id: {
                   equals: selectuser,
@@ -93,13 +107,15 @@ const DetailReportPage = (props) => {
                 total_amount: {
                   equals: 0,
                 },
+                customer_type: {
+                  equals: itg,
+                },
               },
             ],
           },
         },
       });
     } else {
-      console.log("In parking 1");
       getTicketRecord({
         variables: {
           where: {
@@ -111,6 +127,12 @@ const DetailReportPage = (props) => {
                 },
                 user_id: {
                   equals: selectuser,
+                },
+                customer_type: {
+                  equals: itg,
+                },
+                customer: {
+                  equals: vehicleid,
                 },
               },
             ],
@@ -139,6 +161,7 @@ const DetailReportPage = (props) => {
       { headerName: "နေ့စွဲ", field: "created_at", width: 180, valueFormatter: dateFormatter },
       { headerName: "ဝယ်သူအမည်", field: "customer", width: 130 },
       { headerName: "နေရပ်", field: "address", width: 130 },
+      { headerName: "Phone", field: "phone", width: 130 },
       { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
       { headerName: "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ", field: "installment_at", width: 180, valueFormatter: dateFormatter },
       { headerName: "ကြွေးကျန်", field: "total_amount", width: 130 },
@@ -244,6 +267,17 @@ const DetailReportPage = (props) => {
               {user && user.map((r) => <option value={r.id}>{r.name}</option>)}
             </select>
           </div>
+          <div className="flex flex-nowrap mt-2">
+            <select id="vehicle_class" className="select select-primary select-sm" onChange={(e) => setCtype(e.target.value)}>
+              <option value="">All</option>
+              {CustomerType.map((r) => (
+                <option value={r.value}>{r.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-nowrap mt-2">
+            <input className="input input-primary input-sm w-48" type="text" placeholder="Customer Name" onChange={handleVehicleId} />
+          </div>
           <div className="flex flex-nowrap mx-2 mt-2">
             <button onClick={handleGet} className="p-2 w-20 btn btn-accent btn-sm">
               Get
@@ -286,6 +320,11 @@ const DetailReportPage = (props) => {
 const VehicleClass = [
   { label: "ကြွေးကျန်", value: "0" },
   { label: "ကြွေးမကျန်", value: "1" },
+];
+
+const CustomerType = [
+  { label: "Special Sale", value: 1 },
+  { label: "Normal Sale", value: 0 },
 ];
 
 export default withUser(DetailReportPage);

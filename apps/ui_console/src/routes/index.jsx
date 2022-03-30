@@ -24,11 +24,15 @@ import SalePage from "../pages/sale_entry/sale_page";
 import CreateSalePage from "../pages/sale_entry/new_sale_page";
 import EditSalePage from "../pages/sale_entry/edit_sale_page";
 
+import SpecialSalePage from "../pages/sale_entry/special_sale_page";
+import CreateSpecialSalePage from "../pages/sale_entry/new_special_sale_page";
+
 import CreateInstallmentPage from "../pages/Installment/new_installment_page";
 import InstallmentPage from "../pages/Installment/installment_page";
 import PrintPage from "../pages/print/print_page";
 
 import DetailReport from "../pages/report/inout_detail_report";
+import InstallmentReport from "../pages/report/inout_amount_report_page";
 
 export const AppRoutes = (props) => {
   return (
@@ -54,11 +58,15 @@ export const AppRoutes = (props) => {
         <Route path={paths.sale_create} element={<ProtectedPage page={CreateSalePage} />} />
         <Route path={paths.sale_edit} element={<ProtectedPage page={EditSalePage} />} />
 
+        <Route path={paths.special_sale} element={<ProtectedPage page={SpecialSalePage} />} />
+        <Route path={paths.special_sale_create} element={<ProtectedPage page={CreateSalePage} />} />
+
         <Route path={paths.installment_create} element={<ProtectedPage page={CreateInstallmentPage} />} />
         <Route path={paths.installment} element={<ProtectedPage page={InstallmentPage} />} />
         <Route path={paths.print_record} element={<ProtectedPage page={PrintPage} />} />
 
         <Route path={paths.inout_detail_report} element={<ProtectedPage page={DetailReport} />} />
+        <Route path={paths.inout_amount_report} element={<ProtectedPage page={InstallmentReport} />} />
         <Route component={NotFound} />
       </Routes>
     </div>

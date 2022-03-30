@@ -1200,6 +1200,7 @@ type SaleRecord {
   address: String
   created_at: DateTime!
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String!
@@ -1226,6 +1227,7 @@ type SaleRecord {
 }
 
 type SaleRecordAvgAggregate {
+  customer_type: Float
   give_amount: Float
   installment_amount: Float
   net_amount: Float
@@ -1235,6 +1237,7 @@ type SaleRecordAvgAggregate {
 }
 
 input SaleRecordAvgOrderByAggregateInput {
+  customer_type: SortOrder
   give_amount: SortOrder
   installment_amount: SortOrder
   net_amount: SortOrder
@@ -1252,6 +1255,7 @@ type SaleRecordCountAggregate {
   address: Int!
   created_at: Int!
   customer: Int!
+  customer_type: Int!
   father_name: Int!
   give_amount: Int!
   id: Int!
@@ -1278,6 +1282,7 @@ input SaleRecordCountOrderByAggregateInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  customer_type: SortOrder
   father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
@@ -1304,6 +1309,7 @@ input SaleRecordCreateInput {
   address: String
   created_at: DateTime
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1331,6 +1337,7 @@ input SaleRecordCreateManyInput {
   address: String
   created_at: DateTime
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1357,6 +1364,7 @@ input SaleRecordCreateManyShopInput {
   address: String
   created_at: DateTime
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1387,6 +1395,7 @@ input SaleRecordCreateManyUserInput {
   address: String
   created_at: DateTime
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1452,6 +1461,7 @@ input SaleRecordCreateWithoutInstallment_recordsInput {
   address: String
   created_at: DateTime
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1478,6 +1488,7 @@ input SaleRecordCreateWithoutShopInput {
   address: String
   created_at: DateTime
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1504,6 +1515,7 @@ input SaleRecordCreateWithoutUserInput {
   address: String
   created_at: DateTime
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1535,6 +1547,7 @@ type SaleRecordGroupBy {
   address: String
   created_at: DateTime!
   customer: String!
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String!
@@ -1567,6 +1580,7 @@ type SaleRecordMaxAggregate {
   address: String
   created_at: DateTime
   customer: String
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1593,6 +1607,7 @@ input SaleRecordMaxOrderByAggregateInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  customer_type: SortOrder
   father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
@@ -1619,6 +1634,7 @@ type SaleRecordMinAggregate {
   address: String
   created_at: DateTime
   customer: String
+  customer_type: Int
   father_name: String
   give_amount: Int
   id: String
@@ -1645,6 +1661,7 @@ input SaleRecordMinOrderByAggregateInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  customer_type: SortOrder
   father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
@@ -1680,6 +1697,7 @@ input SaleRecordOrderByWithAggregationInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  customer_type: SortOrder
   father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
@@ -1706,6 +1724,7 @@ input SaleRecordOrderByWithRelationInput {
   address: SortOrder
   created_at: SortOrder
   customer: SortOrder
+  customer_type: SortOrder
   father_name: SortOrder
   give_amount: SortOrder
   id: SortOrder
@@ -1740,6 +1759,7 @@ enum SaleRecordScalarFieldEnum {
   address
   created_at
   customer
+  customer_type
   father_name
   give_amount
   id
@@ -1769,6 +1789,7 @@ input SaleRecordScalarWhereInput {
   address: StringNullableFilter
   created_at: DateTimeFilter
   customer: StringFilter
+  customer_type: IntNullableFilter
   father_name: StringNullableFilter
   give_amount: IntNullableFilter
   id: StringFilter
@@ -1798,6 +1819,7 @@ input SaleRecordScalarWhereWithAggregatesInput {
   address: StringNullableWithAggregatesFilter
   created_at: DateTimeWithAggregatesFilter
   customer: StringWithAggregatesFilter
+  customer_type: IntNullableWithAggregatesFilter
   father_name: StringNullableWithAggregatesFilter
   give_amount: IntNullableWithAggregatesFilter
   id: StringWithAggregatesFilter
@@ -1821,6 +1843,7 @@ input SaleRecordScalarWhereWithAggregatesInput {
 }
 
 type SaleRecordSumAggregate {
+  customer_type: Int
   give_amount: Int
   installment_amount: Int
   net_amount: Int
@@ -1830,6 +1853,7 @@ type SaleRecordSumAggregate {
 }
 
 input SaleRecordSumOrderByAggregateInput {
+  customer_type: SortOrder
   give_amount: SortOrder
   installment_amount: SortOrder
   net_amount: SortOrder
@@ -1842,6 +1866,7 @@ input SaleRecordUpdateInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  customer_type: NullableIntFieldUpdateOperationsInput
   father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
@@ -1869,6 +1894,7 @@ input SaleRecordUpdateManyMutationInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  customer_type: NullableIntFieldUpdateOperationsInput
   father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
@@ -1951,6 +1977,7 @@ input SaleRecordUpdateWithoutInstallment_recordsInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  customer_type: NullableIntFieldUpdateOperationsInput
   father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
@@ -1977,6 +2004,7 @@ input SaleRecordUpdateWithoutShopInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  customer_type: NullableIntFieldUpdateOperationsInput
   father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
@@ -2003,6 +2031,7 @@ input SaleRecordUpdateWithoutUserInput {
   address: NullableStringFieldUpdateOperationsInput
   created_at: DateTimeFieldUpdateOperationsInput
   customer: StringFieldUpdateOperationsInput
+  customer_type: NullableIntFieldUpdateOperationsInput
   father_name: NullableStringFieldUpdateOperationsInput
   give_amount: NullableIntFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
@@ -2049,6 +2078,7 @@ input SaleRecordWhereInput {
   address: StringNullableFilter
   created_at: DateTimeFilter
   customer: StringFilter
+  customer_type: IntNullableFilter
   father_name: StringNullableFilter
   give_amount: IntNullableFilter
   id: StringFilter

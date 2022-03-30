@@ -499,7 +499,7 @@ export const SlotLimitIcon = (props) => {
 
 export const MoneyAddIcon = () => {
   return (
-    <svg className="w-9 h-9" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
       <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
         <path d="M3 10V8a2 2 0 0 1 2-2h2m-4 4c1.333 0 4-.8 4-4m-4 4v4m18-4V8a2 2 0 0 0-2-2h-2m4 4c-1.333 0-4-.8-4-4m4 4v2M7 6h10M3 14v2a2 2 0 0 0 2 2h2m-4-4c1.333 0 4 .8 4 4m0 0h4" />
         <circle cx="12" cy="12" r="2" />
@@ -522,7 +522,7 @@ export const SalePerson = () => {
 
 export const PrintIcon = () => {
   return (
-    <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+    <svg className="w-9 h-9" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
       <path fill="#424242" d="M9 11h30v3H9z" />
       <path fill="#616161" d="M4 25h40v-7c0-2.2-1.8-4-4-4H8c-2.2 0-4 1.8-4 4v7z" />
       <path fill="#424242" d="M8 36h32c2.2 0 4-1.8 4-4v-8H4v8c0 2.2 1.8 4 4 4z" />
@@ -532,6 +532,17 @@ export const PrintIcon = () => {
       <path fill="#90CAF9" d="M11 31h26v11H11z" />
       <path fill="#42A5F5" d="M11 29h26v2H11z" />
       <path fill="#1976D2" d="M16 33h17v2H16zm0 4h13v2H16z" />
+    </svg>
+  );
+};
+
+export const SpecialSaleIcon = () => {
+  return (
+    <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path
+        fill="currentColor"
+        d="M19.745 4a2.25 2.25 0 0 1 2.25 2.25v6.555a6.52 6.52 0 0 0-1.5-1.075V6.25a.75.75 0 0 0-.75-.75H4.25a.75.75 0 0 0-.75.75v11.505c0 .414.336.75.75.75l2.749-.001L7 15.75a1.75 1.75 0 0 1 1.606-1.744L8.75 14h3.272A6.47 6.47 0 0 0 11 17.5c0 .888.178 1.734.5 2.505H4.25A2.25 2.25 0 0 1 2 17.755V6.25A2.25 2.25 0 0 1 4.25 4h15.495ZM12 7a3 3 0 1 1 0 6a3 3 0 0 1 0-6Zm11 10.5a5.5 5.5 0 1 1-11 0a5.5 5.5 0 0 1 11 0Zm-4.945-3.08a.577.577 0 0 0-1.11 0l-.557 1.788h-1.803c-.566 0-.8.754-.343 1.1l1.458 1.105l-.557 1.787c-.175.561.441 1.028.899.681l1.458-1.104l1.458 1.104c.458.347 1.074-.12.899-.68l-.557-1.788l1.458-1.104c.458-.347.223-1.101-.343-1.101h-1.803l-.557-1.787Z"
+      />
     </svg>
   );
 };

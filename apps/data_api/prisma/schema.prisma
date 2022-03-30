@@ -12,7 +12,7 @@ generator typegraphql {
 }
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE")
+  url      = "mysql://root:root@localhost:3306/sale"
 }
 
 model shop {
@@ -31,6 +31,18 @@ model item {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   @@map("items")
+}
+
+model customer {
+  id String @id @default(cuid())
+  name String  @db.VarChar(255)
+  address String @db.VarChar(255)
+  Phone String @db.VarChar(255)
+  total_amount Int?
+  description String @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  @@map("customers")
 }
 
 model installmentRecord {

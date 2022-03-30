@@ -64,6 +64,9 @@ const paths = {
   sale_edit: "/sale_edit/:id",
   getSaleEdit: (id) => `/sale_edit/${id}`,
 
+  special_sale: "/special_sale",
+  special_sale_create: "/special_sale_create",
+
   installment: "/installment",
   installment_create: "/installment_create/:id",
   installment_edit: "/installment_edit/:id",

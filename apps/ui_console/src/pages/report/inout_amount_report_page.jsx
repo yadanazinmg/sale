@@ -23,16 +23,6 @@ import { get_sales, get_sale_by_data } from "../../graphql/sale";
 // };
 
 const InstallmentReportPage = (props) => {
-  const {
-    loading: gloading,
-    error,
-    data: users,
-    refetch,
-  } = useQuery(get_users, {
-    pollInterval: 0,
-    fetchPolicy: "network-only",
-  });
-
   const [getTicketRecord, { loading: gqlLoading, data: ticketrecord }] = useLazyQuery(get_sale_by_data, {
     fetchPolicy: "network-only",
   });
@@ -53,20 +43,30 @@ const InstallmentReportPage = (props) => {
   const navigate = useNavigate();
 
   const handleGet = () => {
+    const startdate = moment();
+    const enddate = moment();
     setParkingRecord([]);
-    if (vehicleclass === "0") {
+    if (vehicleclass === "1") {
+      startdate.subtract(2, "d");
+      enddate.subtract(2, "d");
+      const st = startdate.toDate();
+      const et = enddate.toDate();
+      st.setHours(0, 0, 0, 0);
+      et.setHours(23, 59, 59, 999);
+      setsDate(st);
+      seteDate(et);
       console.log("In parking 2");
       getTicketRecord({
         variables: {
           where: {
             AND: [
               {
-                created_at: {
-                  gte: sdate,
-                  lte: edate,
+                installment_at: {
+                  gte: st,
+                  lte: et,
                 },
-                user_id: {
-                  equals: selectuser,
+                customer_type: {
+                  equals: 0,
                 },
                 total_amount: {
                   gt: 0,
@@ -76,22 +76,30 @@ const InstallmentReportPage = (props) => {
           },
         },
       });
-    } else if (vehicleclass === "1") {
+    } else if (vehicleclass === "0") {
+      startdate.add(2, "d");
+      enddate.add(2, "d");
+      const st = startdate.toDate();
+      const et = enddate.toDate();
+      st.setHours(0, 0, 0, 0);
+      et.setHours(23, 59, 59, 999);
+      setsDate(st);
+      seteDate(et);
       console.log("In parking 1");
       getTicketRecord({
         variables: {
           where: {
             AND: [
               {
-                created_at: {
-                  gte: sdate,
-                  lte: edate,
+                installment_at: {
+                  gte: st,
+                  lte: et,
                 },
-                user_id: {
-                  equals: selectuser,
+                customer_type: {
+                  equals: 0,
                 },
                 total_amount: {
-                  equals: 0,
+                  gt: 0,
                 },
               },
             ],
@@ -99,18 +107,27 @@ const InstallmentReportPage = (props) => {
         },
       });
     } else {
+      const st = startdate.toDate();
+      const et = enddate.toDate();
+      st.setHours(0, 0, 0, 0);
+      et.setHours(23, 59, 59, 999);
+      setsDate(st);
+      seteDate(et);
       console.log("In parking 1");
       getTicketRecord({
         variables: {
           where: {
             AND: [
               {
-                created_at: {
-                  gte: sdate,
-                  lte: edate,
+                installment_at: {
+                  gte: st,
+                  lte: et,
                 },
-                user_id: {
-                  equals: selectuser,
+                customer_type: {
+                  equals: 0,
+                },
+                total_amount: {
+                  gt: 0,
                 },
               },
             ],
@@ -165,7 +182,7 @@ const InstallmentReportPage = (props) => {
   };
 
   const handleExport = () => {
-    DetailsExcelExport(parkingrecord, sdate, edate, vehicleclass);
+    DetailsExcelExport(parkingrecord, sdate, edate, count, totalprice);
   };
 
   useEffect(async () => {
@@ -183,19 +200,10 @@ const InstallmentReportPage = (props) => {
     }
   }, [gqlLoading]);
 
-  useEffect(async () => {
-    setLoading(gloading);
-    console.log(users);
-    if (!gqlLoading && users) {
-      console.log(users.users);
-      setUser(users.users);
-    }
-  }, [gloading]);
-
   return (
     <div className="relative flex flex-col h-full">
       <div className="w-full flex flex-row py-1 place-content-center">
-        <span className="text-3xl font-semibold capitalize mb-2">Sale Report</span>
+        <span className="text-3xl font-semibold capitalize mb-2">Installment Report</span>
       </div>
       <div className="w-full flex flex-wrap p-1 pb-2">
         <div className="flex flex-wrap">
@@ -207,12 +215,12 @@ const InstallmentReportPage = (props) => {
               ))}
             </select>
           </div>
-          <div className="flex flex-nowrap mt-2">
+          {/* <div className="flex flex-nowrap mt-2">
             <select id="vehicle_class" className="select select-primary select-sm" onChange={(e) => setSelectUser(e.target.value)}>
               <option value="">All</option>
               {user && user.map((r) => <option value={r.id}>{r.name}</option>)}
             </select>
-          </div>
+          </div> */}
           <div className="flex flex-nowrap mx-2 mt-2">
             <button onClick={handleGet} className="p-2 w-20 btn btn-accent btn-sm">
               Get
@@ -253,8 +261,8 @@ const InstallmentReportPage = (props) => {
 };
 
 const VehicleClass = [
-  { label: "ကြွေးကျန်", value: "0" },
-  { label: "ကြွေးမကျန်", value: "1" },
+  { label: "နောက်ဆုံးကြွေးဆပ်၂ရက်အလို", value: "0" },
+  { label: "နောက်ဆုံးကြွေးဆပ်၂ရက်ကျော်", value: "1" },
 ];
 
 export default withUser(InstallmentReportPage);

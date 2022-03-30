@@ -47,7 +47,7 @@ const EditSalePage = (props) => {
     if (data.picture) {
       data.metadata = data.picture.name;
       axios
-        .post("http://localhost:7000/upload", pdata, {
+        .post("http://192.168.8.197:7000/upload", pdata, {
           // receive two parameter endpoint url ,form data
           onUploadProgress: (ProgressEvent) => {
             // setLoaded((ProgressEvent.loaded / ProgressEvent.total) * 100);
@@ -91,6 +91,9 @@ const EditSalePage = (props) => {
           product_status: {
             set: plc.product_status,
           },
+          phone: {
+            set: plc.phone,
+          },
           metadata: {
             set: plc.metadata,
           },
@@ -133,7 +136,7 @@ const EditSalePage = (props) => {
       const sp = sale.saleRecord;
       sp.installment_at = new Date(sp.installment_at);
       if (sp.metadata) {
-        setPictureUrl(`/dist/public/${sp.metadata}`);
+        setPictureUrl(`/ui_console/public/${sp.metadata}`);
         sp.picture = null;
       }
       console.log(sp);
@@ -204,6 +207,21 @@ const EditSalePage = (props) => {
                       className="input input-primary input-md"
                     />
                     <ErrorMessage name="address" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">Phone</div>
+                  <div className="p-2 m-2">
+                    <Field
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      placeholder="phone"
+                      value={values.phone}
+                      onChange={handleChange}
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="phone" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap">

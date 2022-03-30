@@ -44,7 +44,7 @@ const CreateUserPage = (props) => {
     if (data.picture) {
       data.profile_picture = data.picture.name;
       axios
-        .post("http://localhost:7000/upload", pdata, {
+        .post("http://192.168.8.197:7000/upload", pdata, {
           // receive two parameter endpoint url ,form data
           onUploadProgress: (ProgressEvent) => {
             // setLoaded((ProgressEvent.loaded / ProgressEvent.total) * 100);

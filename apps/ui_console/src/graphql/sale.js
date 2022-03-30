@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const get_sales = gql`
-  query get_sales {
-    saleRecords {
+  query SaleRecords($where: SaleRecordWhereInput) {
+    saleRecords(where: $where) {
       id
       voucher_no
       customer
@@ -16,10 +16,15 @@ export const get_sales = gql`
       user_name
       particular
       metadata
+      phone
+      referral
+      referral_phone
       qty
+      father_name
       created_at
       updated_at
       installment_at
+      customer_type
       _count {
         installment_records
       }
@@ -51,13 +56,18 @@ export const get_sale_by_id = gql`
       net_amount
       particular
       qty
+      father_name
       shop_id
+      phone
+      referral
+      referral_phone
       product_status
       installment_at
       user_id
       user_name
       created_at
       updated_at
+      customer_type
       metadata
     }
   }
@@ -118,6 +128,7 @@ export const get_sale_by_data = gql`
       father_name
       referral
       referral_phone
+      customer_type
       price
       _count {
         installment_records

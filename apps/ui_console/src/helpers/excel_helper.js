@@ -26,9 +26,10 @@ export const DetailsExcelExport = async (parkingrecord, from, to, count, totalpr
     rowValues[2] = "နေ့စွဲ";
     rowValues[3] = "ဝယ်သူအမည်";
     rowValues[4] = "နေရပ်";
-    rowValues[5] = "ကြွေးဆပ်";
-    rowValues[6] = "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ";
-    rowValues[7] = "ကြွေးကျန်";
+    rowValues[5] = "Phone";
+    rowValues[6] = "ကြွေးဆပ်";
+    rowValues[7] = "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ";
+    rowValues[8] = "ကြွေးကျန်";
     sheet.addRow(rowValues);
 
     data.forEach((pr) => {
@@ -37,9 +38,10 @@ export const DetailsExcelExport = async (parkingrecord, from, to, count, totalpr
       rowValues[2] = dateFormatterExcel(pr.created_at);
       rowValues[3] = pr.customer;
       rowValues[4] = pr.address;
-      rowValues[5] = pr.give_amount;
-      rowValues[6] = dateFormatterExcel(pr.installment_at);
-      rowValues[7] = pr.total_amount;
+      rowValues[5] = pr.phone;
+      rowValues[6] = pr.give_amount;
+      rowValues[7] = dateFormatterExcel(pr.installment_at);
+      rowValues[8] = pr.total_amount;
       sheet.addRow(rowValues);
     });
 

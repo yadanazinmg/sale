@@ -15,6 +15,7 @@ import {
   SalePerson,
   ShiftIcon,
   SlotLimitIcon,
+  SpecialSaleIcon,
   User,
   Vaccine2,
 } from "../assets/icons/svg_icons";
@@ -38,6 +39,12 @@ const menuData = [
     name: "Installment",
     link: paths.installment,
     icon: MoneyAddIcon,
+    roles: ["ADMIN"],
+  },
+  {
+    name: "Special Sale",
+    link: paths.special_sale,
+    icon: SpecialSaleIcon,
     roles: ["ADMIN"],
   },
   {

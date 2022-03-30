@@ -5,7 +5,7 @@ yarn
 --database creating
 yarn prisma migrate
 yarn prisma migrate dev
-yarn prisma migrate dev --name "add new count column"
+yarn 
 yarn prisma migrate deploy
 
 -- type generation

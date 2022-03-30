@@ -29,7 +29,7 @@ const formData = {
   metadata: "",
 };
 
-const CreateSalePage = (props) => {
+const CreateSpecialSalePage = (props) => {
   const {
     loading: gqlLoading,
     error,
@@ -117,7 +117,7 @@ const CreateSalePage = (props) => {
           metadata: plc.metadata,
           phone: plc.phone,
           qty: plc.qty,
-          customer_type: 0,
+          customer_type: 1,
           user: {
             connect: {
               id: plc.userId,
@@ -339,7 +339,7 @@ const CreateSalePage = (props) => {
 
   return (
     <div className="p-2 flex flex-col">
-      <div className="px-4 text-2xl font-bold">New Customer</div>
+      <div className="px-4 text-2xl font-bold">New Special Customer</div>
       <EntryForm />
     </div>
   );
@@ -350,4 +350,4 @@ const ProductStatus = [
   { label: "ပစ္စည်းမယူရသေး", value: "BEFORE" },
 ];
 
-export default withUser(CreateSalePage);
+export default withUser(CreateSpecialSalePage);
