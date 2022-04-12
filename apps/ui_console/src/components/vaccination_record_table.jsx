@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import moment from "moment";
 import { nanoid } from "nanoid";
 import withUser from "../hocs/with_user";
-import { get_sale_by_id } from "../graphql/sale";
+import { get_sale_by_id, get_sale_by_data } from "../graphql/sale";
 
 const VaccinationRecordTable = (props) => {
   const { id: saleid } = useParams();
@@ -20,7 +20,12 @@ const VaccinationRecordTable = (props) => {
     },
     pollInterval: 0,
   });
+
+  const [getCurRecord, { loading: gLoading, data: cusrecord }] = useLazyQuery(get_sale_by_data, {
+    fetchPolicy: "network-only",
+  });
   const [sales, setSale] = useState();
+
   const { id, org } = props;
   const [emptyRows, setEmptyRows] = useState([]);
   let [loading, setLoading] = useState(true);
@@ -35,11 +40,103 @@ const VaccinationRecordTable = (props) => {
   useEffect(async () => {
     console.log(sale);
     if (!gqlLoading && sale) {
-      setSale(sale.saleRecord);
+      let tmp = sale.saleRecord;
+      if (tmp.customer_id) {
+        console.log("in customer");
+        getAllRecord(tmp.customer_id);
+      } else {
+        console.log("in sale");
+        setSale(sale.saleRecord);
+      }
     }
   }, [gqlLoading]);
 
+  useEffect(async () => {
+    setLoading(gLoading);
+    if (!gLoading && cusrecord) {
+      console.log(cusrecord.saleRecords);
+      const tmp = cusrecord.saleRecords;
+      console.log(tmp);
+
+      let i = 0;
+      const reducer = (map, d) => {
+        console.log(d);
+        let user = d.customer_id;
+        console.log(user);
+        if (map[user]) {
+          let a = map[user];
+          a.cid = user;
+          a.count += 1;
+          a.customer = d.customer;
+          a.voucher_no = d.voucher_no;
+          a.address = d.address;
+          a.phone = d.phone;
+          a.referral = d.referral;
+          a.referral_phone = d.referral_phone;
+          a.father_name = d.father_name;
+          a.particular = d.particular;
+          a.qty = d.qty;
+          a.price = d.price;
+          a.net_amount += d.total_amount ? d.total_amount : 0;
+          a.total_amount += d.total_amount ? d.total_amount : 0;
+          a.give_amount = d.give_amount ? d.give_amount : 0;
+          a.installment_at = d.installment_at;
+          a.product_status = d.product_status;
+          a.customer_type = d.customer_type;
+
+          // a[i] = d;
+          i++;
+        } else {
+          map[user] = {
+            cid: user,
+            customer: d.customer,
+            voucher_no: d.voucher_no,
+            address: d.address,
+            phone: d.phone,
+            referral: d.referral,
+            referral_phone: d.referral_phone,
+            father_name: d.father_name,
+            particular: d.particular,
+            qty: d.qty,
+            price: d.price,
+            total_amount: d.total_amount ? d.total_amount : 0,
+            net_amount: d.total_amount ? d.total_amount : 0,
+            give_amount: d.give_amount,
+            installment_at: d.installment_at,
+            product_status: d.product_status,
+            customer_type: d.customer_type,
+            // 9000001: d,
+          };
+        }
+        return map;
+      };
+      const obj = tmp.reduce(reducer, []);
+      const result = Object.values(obj);
+      console.log(result);
+      setSale(result[0]);
+    }
+  }, [gLoading]);
   // /// {v.hcp?.Name}
+  const getAllRecord = (cid) => {
+    getCurRecord({
+      variables: {
+        where: {
+          customer_id: {
+            equals: cid,
+          },
+        },
+      },
+    });
+  };
+
+  const getPriceFormat = (value) => {
+    console.log(value);
+    let dollarUSLocale = Intl.NumberFormat("en-US");
+    let dl = dollarUSLocale.format(value);
+    console.log(dl);
+    return dl;
+  };
+
   return (
     <div className="grid grid-cols-5  border-t-2 border-gray-500">
       {/* <div className="p-1 text-center bg-blue-300 border-b-2 border-gray-500 bg-opacity-80">
@@ -90,13 +187,13 @@ const VaccinationRecordTable = (props) => {
 
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">အာမခံကိုယ်စားလှယ် </span>
-                <span className="mr-2 w-60 border-gray-500"> </span>
+                <span className="mr-2 w-60 border-gray-500">{sales.referral} </span>
               </div>
             </div>
             <div className="mb-8 flex flex-row border-l-2 border-gray-500">
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="w-40 border-gray-500 text-sm font-bold border-r-2">အဘအမည် </span>
-                <span className=" w-60 border-gray-500"> </span>
+                <span className=" w-60 border-gray-500">{sales.father_name}</span>
               </div>
               <div className="flex flex-row text-center  border-gray-500  bg-opacity-80">
                 {" "}
@@ -105,7 +202,7 @@ const VaccinationRecordTable = (props) => {
 
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="w-44 h-7 border-gray-500 text-sm font-bold border-r-2 ">ဖုန်းနံပါတ် </span>
-                <span className="mr-2 w-60 border-gray-500"> </span>
+                <span className="mr-2 w-60 border-gray-500">{sales.referral_phone}</span>
               </div>
             </div>
             <div className="flex flex-row border-l-2  border-gray-500">
@@ -134,8 +231,11 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className=" flex flex-row col-span-2 text-center  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="w-44 border-gray-500 border-r-2">{sales.price} </span>
-                <span className="mr-2 w-60 border-gray-500">{sales.total_amount} </span>
+                <span className="w-44 border-gray-500 border-r-2">{getPriceFormat(sales.price)} </span>
+                {sales.customer_type == 1 && (
+                  <span className="mr-2 w-60 border-gray-500">{getPriceFormat(parseInt(sales.net_amount) + parseInt(sales.give_amount))} </span>
+                )}
+                {sales.customer_type == 0 && <span className="mr-2 w-60 border-gray-500">{getPriceFormat(sales.net_amount)}</span>}
               </div>
             </div>
             <div className="flex flex-row border-l-2  border-l-transparent border-gray-500">
@@ -150,7 +250,10 @@ const VaccinationRecordTable = (props) => {
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">စုစုပေါင်း </span>
-                <span className="mr-2 w-60 border-gray-500">{sales.total_amount} </span>
+                {sales.customer_type == 1 && (
+                  <span className="mr-2 w-60 border-gray-500">{getPriceFormat(parseInt(sales.net_amount + parseInt(sales.give_amount)))} </span>
+                )}
+                {sales.customer_type == 0 && <span className="mr-2 w-60 border-gray-500">{getPriceFormat(sales.net_amount)}</span>}
               </div>
             </div>
             <div className="flex flex-row border-l-2  border-l-transparent  border-gray-500">
@@ -180,7 +283,7 @@ const VaccinationRecordTable = (props) => {
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">ပေးငွေ </span>
-                <span className="mr-2 w-60 border-gray-500">{sales.net_amount} </span>
+                <span className="mr-2 w-60 border-gray-500">{getPriceFormat(sales.give_amount)} </span>
               </div>
             </div>
             <div className=" mb-2 flex flex-row border-l-2  border-l-transparent border-gray-500">
@@ -196,7 +299,7 @@ const VaccinationRecordTable = (props) => {
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
                 <span className="w-44 border-gray-500 text-sm font-bold border-r-2">ကျန်ငွေ </span>
-                <span className="mr-2 w-60 border-gray-500">{sales.total_amount} </span>
+                <span className="mr-2 w-60 border-gray-500">{getPriceFormat(sales.total_amount)} </span>
               </div>
             </div>
             {sales.total_amount > 0 && (
@@ -253,6 +356,7 @@ const VaccinationRecordTable = (props) => {
                 </div>
               </div>
             </div>
+            <div></div>
           </div>
         </>
       )}

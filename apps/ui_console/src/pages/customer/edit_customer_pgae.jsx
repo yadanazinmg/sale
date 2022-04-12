@@ -48,13 +48,13 @@ const EditCustomerPage = (props) => {
       variables: {
         data: {
           name: {
-            set: plc.customer,
+            set: plc.name,
           },
           address: {
             set: plc.address,
           },
-          phone: {
-            set: plc.phone,
+          Phone: {
+            set: plc.Phone,
           },
         },
         where: {
@@ -64,7 +64,7 @@ const EditCustomerPage = (props) => {
     })
       .then((resp) => {
         console.log(resp);
-        navigate(paths.sale);
+        navigate(paths.customer);
       })
       .catch((error) => {
         setUpdateError({ ...error, msg: error, show: true });
@@ -72,7 +72,7 @@ const EditCustomerPage = (props) => {
   };
 
   const handleBack = () => {
-    navigate(paths.sale);
+    navigate(paths.customer);
   };
 
   const handleDateChangeRaw = (e) => {
@@ -112,14 +112,14 @@ const EditCustomerPage = (props) => {
                   <div className="p-2 m-2">
                     <Field
                       type="text"
-                      id="customer"
-                      name="customer"
-                      placeholder="customer"
-                      value={values.customer}
+                      id="name"
+                      name="name"
+                      placeholder="name"
+                      value={values.name}
                       onChange={handleChange}
                       className="input input-primary input-md"
                     />
-                    <ErrorMessage name="customer" component="span" className="text-sm text-red-500 px-2" />
+                    <ErrorMessage name="name" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
@@ -142,14 +142,14 @@ const EditCustomerPage = (props) => {
                   <div className="p-2 m-2">
                     <Field
                       type="text"
-                      id="phone"
-                      name="phone"
-                      placeholder="phone"
-                      value={values.phone}
+                      id="Phone"
+                      name="Phone"
+                      placeholder="Phone"
+                      value={values.Phone}
                       onChange={handleChange}
                       className="input input-primary input-md"
                     />
-                    <ErrorMessage name="phone" component="span" className="text-sm text-red-500 px-2" />
+                    <ErrorMessage name="Phone" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap p-3">
@@ -163,7 +163,6 @@ const EditCustomerPage = (props) => {
                     Clear
                   </button>
                 </div>
-                <LoadingIndicator loading={loading} color="#000099" />
               </div>
             </Form>
           );

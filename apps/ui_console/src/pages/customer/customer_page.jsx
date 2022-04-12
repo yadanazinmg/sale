@@ -33,8 +33,25 @@ const CustomerPage = (props) => {
     pollInterval: 0,
     fetchPolicy: "no-cache",
   });
+  const {
+    loading: sLoading,
+    error: serror,
+    data: srecord,
+    refetch: srefetch,
+  } = useQuery(get_sales, {
+    variables: {
+      where: {
+        customer_type: {
+          equals: parseInt(1),
+        },
+      },
+    },
+    pollInterval: 0,
+    fetchPolicy: "no-cache",
+  });
   const [deleteSale] = useMutation(delete_customer);
   const [gate, setGate] = useState([]);
+  const [sales, setSales] = useState();
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [deleteId, setDeleteId] = useState();
@@ -49,13 +66,48 @@ const CustomerPage = (props) => {
   const navigate = useNavigate();
 
   useEffect(async () => {
+    setLoading(sLoading);
+    if (!sLoading && srecord) {
+      const sp = srecord.saleRecords;
+      if (sp) {
+        let i = 0;
+        const reducer = (map, d) => {
+          console.log(d);
+          let user = d.customer_id;
+          console.log(user);
+          if (map[user]) {
+            let a = map[user];
+            a.cid = user;
+            a.count += 1;
+            a.amount += d.total_amount ? d.total_amount : 0;
+            // a[i] = d;
+            i++;
+          } else {
+            map[user] = {
+              cid: user,
+              count: 1,
+              amount: d.total_amount ? d.total_amount : 0,
+              // 9000001: d,
+            };
+          }
+          return map;
+        };
+        const obj = sp.reduce(reducer, []);
+        const result = Object.values(obj);
+        console.log(result);
+        setSales(result);
+      }
+    }
+  }, [sLoading]);
+
+  useEffect(async () => {
     setLoading(gqlLoading);
     console.log(ticketTypes);
     if (!gqlLoading && ticketTypes) {
       setGate(ticketTypes.customers);
       setRowCount(ticketTypes.customers.length);
     }
-  }, [gqlLoading]);
+  }, [gqlLoading || sLoading]);
 
   const handleCreate = () => {
     console.log("create");
@@ -97,6 +149,7 @@ const CustomerPage = (props) => {
     gridApi.setQuickFilter(e.target.value);
     //
   };
+
   const rowActionsRenderer = (params) => {
     return (
       <div className="flex flex-row">
@@ -117,8 +170,8 @@ const CustomerPage = (props) => {
       //{ field: "id", width: 300 },
       { headerName: "ဝယ်သူအမည်", field: "name", width: 130 },
       { headerName: "နေရပ်", field: "address", width: 130 },
-      { headerName: "phone", field: "phone", width: 130 },
-      { headerName: "Total Amount", field: "total_amount", width: 130 },
+      { headerName: "phone", field: "Phone", width: 130 },
+      // { headerName: "Total Amount", field: "total_amount", valueFormatter: rowTotalAmountAdd },
       { headerName: "Actions", width: 150, autoHeight: true, cellRendererFramework: rowActionsRenderer },
     ],
     []

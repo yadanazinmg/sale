@@ -145,7 +145,7 @@ const SalePage = (props) => {
       { headerName: "နေ့စွဲ", field: "sale_date", width: 180, valueFormatter: dateFormatter },
       { headerName: "ဝယ်သူအမည်", field: "customer", width: 130 },
       { headerName: "နေရပ်", field: "address", width: 130 },
-      { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
+      { headerName: "Price", field: "price", width: 100 },
       { headerName: "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ", field: "installment_at", width: 180, valueFormatter: dateFormatter },
       { headerName: "ကြွေးကျန်", field: "total_amount", width: 130 },
       { headerName: "Actions", width: 150, autoHeight: true, cellRendererFramework: rowActionsRenderer },

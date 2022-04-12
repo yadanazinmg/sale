@@ -10,7 +10,7 @@ import withUser from "../../hocs/with_user";
 import { get_system_data_by_id, update_system_data } from "../../graphql/system_data";
 
 const formSchema = yup.object().shape({
-  value: yup.number().required("Name is required."),
+  value: yup.string().required("Name is required."),
 });
 
 let formData = {};
@@ -105,13 +105,13 @@ const EditParkingSlotPage = (props) => {
                   <div className="w-48 p-2 m-2 label">Value</div>
                   <div className="p-2 m-2">
                     <Field
-                      type="text"
+                      component="textarea"
                       id="value"
                       name="value"
                       placeholder="value"
                       value={values.value}
                       onChange={handleChange}
-                      className="input input-primary input-md"
+                      className="w-64 textarea textarea-primary texta"
                     />
                     <ErrorMessage name="value" component="span" className="text-sm text-red-500 px-2" />
                   </div>
@@ -137,7 +137,7 @@ const EditParkingSlotPage = (props) => {
 
   return (
     <div className="p-2 flex flex-col">
-      <div className="px-4 text-2xl font-bold">Edit Parking Slot</div>
+      <div className="px-4 text-2xl font-bold">Edit Thank You</div>
       <EntryForm />
     </div>
   );

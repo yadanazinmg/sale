@@ -95,9 +95,6 @@ const InstallmentReportPage = (props) => {
                   gte: st,
                   lte: et,
                 },
-                customer_type: {
-                  equals: 0,
-                },
                 total_amount: {
                   gt: 0,
                 },
@@ -122,9 +119,6 @@ const InstallmentReportPage = (props) => {
                 installment_at: {
                   gte: st,
                   lte: et,
-                },
-                customer_type: {
-                  equals: 0,
                 },
                 total_amount: {
                   gt: 0,

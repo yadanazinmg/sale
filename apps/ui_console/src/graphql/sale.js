@@ -6,6 +6,7 @@ export const get_sales = gql`
       id
       voucher_no
       customer
+      customer_id
       address
       give_amount
       total_amount
@@ -52,6 +53,7 @@ export const get_sale_by_id = gql`
       id
       voucher_no
       customer
+      customer_id
       address
       give_amount
       total_amount
@@ -113,6 +115,7 @@ export const get_sale_by_data = gql`
       id
       voucher_no
       customer
+      customer_id
       address
       give_amount
       total_amount

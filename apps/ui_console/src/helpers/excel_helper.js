@@ -3,7 +3,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { durationCalculator, dateFormatterExcel } from "../helpers/date_helpers";
 
-export const DetailsExcelExport = async (parkingrecord, from, to, count, totalprice) => {
+export const DetailsExcelExport = async (parkingrecord, count, totalprice) => {
   console.log("in excel");
   try {
     const data = parkingrecord;
@@ -17,36 +17,27 @@ export const DetailsExcelExport = async (parkingrecord, from, to, count, totalpr
     workbook.modified = new Date();
     workbook.properties.date1904 = true;
     const sheet = workbook.addWorksheet("Detail");
-    sheet.addRow(["From", "To", "Total Count", "Total Amount"]);
-    sheet.addRow([new Date(from), new Date(to), count, totalprice]);
+    sheet.addRow(["Date", "Total Count", "Total Amount"]);
+    sheet.addRow([new Date(), count, totalprice]);
     sheet.addRow();
 
     const rowValues = [];
-    rowValues[1] = "ဘောင်ချာနံပါတ်";
-    rowValues[2] = "နေ့စွဲ";
-    rowValues[3] = "ဝယ်သူအမည်";
-    rowValues[4] = "နေရပ်";
-    rowValues[5] = "Phone";
-    rowValues[6] = "ကြွေးဆပ်";
-    rowValues[7] = "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ";
-    rowValues[8] = "ကြွေးကျန်";
+    rowValues[1] = "ဝယ်သူအမည်";
+    rowValues[2] = "နေရပ်";
+    rowValues[3] = "Phone";
+    rowValues[4] = "ကြွေးကျန်";
     sheet.addRow(rowValues);
 
     data.forEach((pr) => {
       const rowValues = [];
-      rowValues[1] = pr.voucher_no;
-      rowValues[2] = dateFormatterExcel(pr.created_at);
-      rowValues[3] = pr.customer;
-      rowValues[4] = pr.address;
-      rowValues[5] = pr.phone;
-      rowValues[6] = pr.give_amount;
-      rowValues[7] = dateFormatterExcel(pr.installment_at);
-      rowValues[8] = pr.total_amount;
+      rowValues[1] = pr.name;
+      rowValues[2] = pr.address;
+      rowValues[3] = pr.phone;
+      rowValues[4] = pr.amount;
       sheet.addRow(rowValues);
     });
 
     sheet.getCell("A2").numFmt = "dd/mm/yyyy";
-    sheet.getCell("B2").numFmt = "dd/mm/yyyy";
     console.log(workbook);
     const buffer = await workbook.xlsx.writeBuffer();
     console.log(buffer);
@@ -307,13 +298,6 @@ export const SalePrint = async (saleRecord, date) => {
     rowValues[3] = "Total Parking Fee";
     sheet.addRow(rowValues);
 
-    // data.forEach((pr) => {
-    //   const rowValues = [];
-    //   rowValues[1] = pr.shift;
-    //   rowValues[2] = parseInt(pr.count);
-    //   rowValues[3] = parseFloat(pr.amount);
-    //   sheet.addRow(rowValues);
-    // });
     sheet.getCell("A2").numFmt = "dd/mm/yyyy";
     sheet.getCell("B2").numFmt = "dd/mm/yyyy";
     console.log(workbook);

@@ -53,10 +53,10 @@ const CreateInstallmentPage = (props) => {
             set: amount,
           },
           give_amount: {
-            increment: plc.amount,
+            set: plc.amount,
           },
           net_amount: {
-            set: plc.amount,
+            set: plc.total_amount,
           },
           particular: {
             set: plc.particular,
@@ -135,88 +135,109 @@ const CreateInstallmentPage = (props) => {
           return (
             <Form autoComplete="off">
               <div className="form-control">
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ဘောင်ချာနံပါတ်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="voucher_no"
-                      name="voucher_no"
-                      placeholder="voucher_no"
-                      value={values.voucher_no}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                      disabled
-                    />
-                    <ErrorMessage name="voucher_no" component="span" className="text-sm text-red-500 px-2" />
+                <div className="flex flex-row flex-nowrap">
+                  <div className="flex flex-nowrap">
+                    <div className="w-36 p-2 m-2 label">ဘောင်ချာနံပါတ်</div>
+                    <div className="p-2 m-2">
+                      <Field
+                        type="text"
+                        id="voucher_no"
+                        name="voucher_no"
+                        placeholder="voucher_no"
+                        value={values.voucher_no}
+                        onChange={handleChange}
+                        className="input input-primary input-md"
+                        disabled
+                      />
+                      <ErrorMessage name="voucher_no" component="span" className="text-sm text-red-500 px-2" />
+                    </div>
+                  </div>
+                  <div className="flex flex-nowrap">
+                    <div className="w-36 p-2 m-2 label">ဝယ်သူအမည်</div>
+                    <div className="p-2 m-2">
+                      <Field
+                        type="text"
+                        id="customer"
+                        name="customer"
+                        placeholder="customer"
+                        value={values.customer}
+                        onChange={handleChange}
+                        className="input input-primary input-md"
+                        disabled
+                      />
+                      <ErrorMessage name="customer" component="span" className="text-sm text-red-500 px-2" />
+                    </div>
+                  </div>
+                  <div className="flex flex-nowrap">
+                    <div className="w-36 p-2 m-2 label">နေရပ်</div>
+                    <div className="p-2 m-2">
+                      <Field
+                        type="text"
+                        id="address"
+                        name="address"
+                        placeholder="address"
+                        value={values.address}
+                        onChange={handleChange}
+                        className="input input-primary input-md"
+                        disabled
+                      />
+                      <ErrorMessage name="address" component="span" className="text-sm text-red-500 px-2" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-row flex-nowrap">
+                  <div className="flex flex-nowrap w-auto">
+                    <div className="w-36 p-2 m-2 label">ပစ္စည်းယူ/မယူ</div>
+                    <div className="p-2 m-2">
+                      <select
+                        id="product_status"
+                        className="select select-primary w-48"
+                        name="product_status"
+                        value={values.product_status}
+                        onChange={handleChange}
+                      >
+                        <option value="">Select</option>
+                        {ProductStatus.map((r) => (
+                          <option value={r.value}>{r.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex flex-nowrap">
+                    <div className="w-36 p-2 m-2 label">ပစ္စည်းအမည်</div>
+                    <div className="p-2 m-2">
+                      <Field
+                        type="text"
+                        id="particular"
+                        name="particular"
+                        placeholder="particular"
+                        value={values.particular}
+                        onChange={handleChange}
+                        className="input input-primary input-md"
+                        disabled
+                      />
+                      <ErrorMessage name="particular" component="span" className="text-sm text-red-500 px-2" />
+                    </div>
+                  </div>
+                  <div className="flex flex-nowrap">
+                    <div className="w-36 p-2 m-2 label">အရေအတွက်</div>
+                    <div className="p-2 m-2">
+                      <Field
+                        type="number"
+                        id="qty"
+                        name="qty"
+                        placeholder="qty"
+                        value={values.qty}
+                        onChange={handleChange}
+                        className="input input-primary input-md"
+                        disabled
+                      />
+                      <ErrorMessage name="qty" component="span" className="text-sm text-red-500 px-2" />
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ဝယ်သူအမည်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="customer"
-                      name="customer"
-                      placeholder="customer"
-                      value={values.customer}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                      disabled
-                    />
-                    <ErrorMessage name="customer" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">နေရပ်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="address"
-                      name="address"
-                      placeholder="address"
-                      value={values.address}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                      disabled
-                    />
-                    <ErrorMessage name="address" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ပစ္စည်းအမည်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="text"
-                      id="particular"
-                      name="particular"
-                      placeholder="particular"
-                      value={values.particular}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                      disabled
-                    />
-                    <ErrorMessage name="particular" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">အရေအတွက်</div>
-                  <div className="p-2 m-2">
-                    <Field
-                      type="number"
-                      id="qty"
-                      name="qty"
-                      placeholder="qty"
-                      value={values.qty}
-                      onChange={handleChange}
-                      className="input input-primary input-md"
-                      disabled
-                    />
-                    <ErrorMessage name="qty" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ပေးငွေ</div>
+                  <div className="w-36 p-2 m-2 label">ပေးငွေ</div>
                   <div className="p-2 m-2">
                     <Field
                       type="number"
@@ -228,23 +249,6 @@ const CreateInstallmentPage = (props) => {
                       className="input input-primary input-md"
                     />
                     <ErrorMessage name="amount" component="span" className="text-sm text-red-500 px-2" />
-                  </div>
-                </div>
-                <div className="flex flex-nowrap w-auto">
-                  <div className="w-48 p-2 m-2 label">ပစ္စည်းယူ/မယူ</div>
-                  <div className="p-2 m-2">
-                    <select
-                      id="product_status"
-                      className="select select-primary w-full"
-                      name="product_status"
-                      value={values.product_status}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select</option>
-                      {ProductStatus.map((r) => (
-                        <option value={r.value}>{r.label}</option>
-                      ))}
-                    </select>
                   </div>
                 </div>
                 <div className="flex flex-nowrap p-3">

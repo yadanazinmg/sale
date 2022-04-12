@@ -33,10 +33,14 @@ import PrintPage from "../pages/print/print_page";
 
 import DetailReport from "../pages/report/inout_detail_report";
 import InstallmentReport from "../pages/report/inout_amount_report_page";
+import SpecialCustomerReport from "../pages/report/inout_by_operator_page";
 
 import Customer from "../pages/customer/customer_page";
 import CreateCustomerPage from "../pages/customer/new_customer_page";
 import EditCustomerPage from "../pages/customer/edit_customer_pgae";
+
+import ThankYouPage from "../pages/system_data/parking_slot_page";
+import EditThankYouPage from "../pages/system_data/update_parking_slot_page";
 
 export const AppRoutes = (props) => {
   return (
@@ -75,6 +79,10 @@ export const AppRoutes = (props) => {
 
         <Route path={paths.inout_detail_report} element={<ProtectedPage page={DetailReport} />} />
         <Route path={paths.inout_amount_report} element={<ProtectedPage page={InstallmentReport} />} />
+        <Route path={paths.inout_operator_report} element={<ProtectedPage page={SpecialCustomerReport} />} />
+
+        <Route path={paths.parking_slot} element={<ProtectedPage page={ThankYouPage} />} />
+        <Route path={paths.parking_slot_edit} element={<ProtectedPage page={EditThankYouPage} />} />
         <Route component={NotFound} />
       </Routes>
     </div>

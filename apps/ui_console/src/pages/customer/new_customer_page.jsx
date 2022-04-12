@@ -4,14 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import withUser from "../../hocs/with_user";
 import * as yup from "yup";
-import DatePicker from "react-datepicker";
-import { create_sale } from "../../graphql/sale";
-import { get_system_data, update_system_data } from "../../graphql/system_data";
-import LoadingIndicator from "../../components/loading_indicator";
 import paths from "../../routes/paths";
-import PicturePicker from "../../components/picture_picker";
-import ProgressBar from "../../controls/progress_bar";
-import axios from "axios";
+import { create_customer } from "../../graphql/customer";
 const formSchema = yup.object().shape({
   name: yup.string().required("Customer is required."),
 });
@@ -22,57 +16,30 @@ const formData = {
 };
 
 const CreateCustomerPage = (props) => {
-  const {
-    loading: gqlLoading,
-    error,
-    data: gates,
-    refetch,
-  } = useQuery(get_system_data, {
-    pollInterval: 0,
-    fetchPolicy: "no-cache",
-    variables: {
-      where: {
-        code: {
-          equals: "VoucherNo",
-        },
-      },
-    },
-  });
-  const [addGate, { data }] = useMutation(create_sale);
-  const [updateVoucher] = useMutation(update_system_data);
-  const [voucherno, setVoucherNo] = useState();
+  const [addGate, { data }] = useMutation(create_customer);
   let [loading, setLoading] = useState(true);
   const [uploadProgress, setUploadProgress] = useState(50);
   const [pictureUrl, setPictureUrl] = useState();
   const navigate = useNavigate();
 
-  useEffect(async () => {
-    setLoading(gqlLoading);
-    console.log(gates);
-    if (!gqlLoading && gates) {
-      let vcode = gates.findManySystemData[0].value;
-      console.log(gates.findManySystemData);
-      formData.voucher_no = vcode;
-      setVoucherNo(gates.findManySystemData);
-    }
-  }, [gqlLoading]);
-
   const handleSave = async (data) => {
-    console.log(data);
     const plc = { ...data };
     console.log(plc);
+    console.log(data);
     addGate({
       variables: {
         data: {
           name: plc.name,
           address: plc.address,
-          phone: plc.phone,
+          Phone: plc.Phone,
+          description: "customer",
+          total_amount: 0,
         },
       },
     }).then((resp) => {
       console.log(resp);
     });
-    //navigate(-1);
+    navigate(-1);
   };
 
   const handleBack = () => {
@@ -125,14 +92,14 @@ const CreateCustomerPage = (props) => {
                   <div className="p-2 m-2">
                     <Field
                       type="text"
-                      id="phone"
-                      name="phone"
-                      placeholder="phone"
-                      value={values.phone}
+                      id="Phone"
+                      name="Phone"
+                      placeholder="Phone"
+                      value={values.Phone}
                       onChange={handleChange}
                       className="input input-primary input-md"
                     />
-                    <ErrorMessage name="phone" component="span" className="text-sm text-red-500 px-2" />
+                    <ErrorMessage name="Phone" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
                 <div className="flex flex-nowrap p-3">
@@ -146,7 +113,6 @@ const CreateCustomerPage = (props) => {
                     Clear
                   </button>
                 </div>
-                <LoadingIndicator loading={loading} color="#000099" />
               </div>
             </Form>
           );
@@ -162,10 +128,5 @@ const CreateCustomerPage = (props) => {
     </div>
   );
 };
-
-const ProductStatus = [
-  { label: "ပစ္စည်းယူပြီး", value: "AFTER" },
-  { label: "ပစ္စည်းမယူရသေး", value: "BEFORE" },
-];
 
 export default withUser(CreateCustomerPage);

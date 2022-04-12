@@ -56,3 +56,21 @@ export const delete_customer = gql`
     }
   }
 `;
+
+export const increment_customer_amount = gql`
+  mutation increment_customer_amount($data: CustomerUpdateInput!, $where: CustomerWhereUniqueInput!) {
+    updateCustomer(data: $data, where: $where) {
+      id
+      name
+    }
+  }
+`;
+
+export const decresement_customer_amount = gql`
+  mutation increment_customer_amount($data: CustomerUpdateInput!, $where: CustomerWhereUniqueInput!) {
+    updateCustomer(data: $data, where: $where) {
+      id
+      name
+    }
+  }
+`;

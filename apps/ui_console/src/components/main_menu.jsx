@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
+  CustomerIcon,
   GateIcon,
   HCP,
   HomeIcon,
@@ -16,6 +17,7 @@ import {
   ShiftIcon,
   SlotLimitIcon,
   SpecialSaleIcon,
+  ThankYouIcon,
   User,
   Vaccine2,
 } from "../assets/icons/svg_icons";
@@ -36,6 +38,12 @@ const menuData = [
     roles: ["ADMIN"],
   },
   {
+    name: "Customer",
+    link: paths.customer,
+    icon: CustomerIcon,
+    roles: ["ADMIN"],
+  },
+  {
     name: "Installment",
     link: paths.installment,
     icon: MoneyAddIcon,
@@ -51,6 +59,12 @@ const menuData = [
     name: "Sale",
     link: paths.sale,
     icon: SalePerson,
+    roles: ["ADMIN"],
+  },
+  {
+    name: "Thank You",
+    link: paths.parking_slot,
+    icon: ThankYouIcon,
     roles: ["ADMIN"],
   },
   {

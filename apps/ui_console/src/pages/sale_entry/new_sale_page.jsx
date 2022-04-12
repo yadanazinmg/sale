@@ -22,8 +22,6 @@ const formData = {
   voucher_no: "",
   customer: "",
   address: "",
-  give_amount: 0,
-  net_amount: 0,
   product_status: null,
   particular: "",
   metadata: "",
@@ -52,6 +50,7 @@ const CreateSalePage = (props) => {
   let [loading, setLoading] = useState(true);
   const [uploadProgress, setUploadProgress] = useState(50);
   const [pictureUrl, setPictureUrl] = useState();
+  const [prices, setPrice] = useState();
   const navigate = useNavigate();
 
   useEffect(async () => {
@@ -92,7 +91,8 @@ const CreateSalePage = (props) => {
     console.log(props.user.id);
     plc.user_name = props.user.name;
     plc.userId = props.user.id;
-
+    plc.price = parseInt(plc.price);
+    plc.give_amount = parseInt(plc.give_amount);
     let vno = 0;
     let vid = "";
     if (voucherno) {
@@ -119,6 +119,9 @@ const CreateSalePage = (props) => {
           qty: plc.qty,
           sale_date: plc.sale_date,
           price: plc.price,
+          referral_phone: plc.referral_phone,
+          referral: plc.referral,
+          father_name: plc.father_name,
           customer_type: 0,
           user: {
             connect: {
@@ -150,11 +153,11 @@ const CreateSalePage = (props) => {
         //navigate(paths.sale);
       });
     });
-    //navigate(-1);
+    navigate(-1);
   };
 
   const handleBack = () => {
-    navigate(paths.sale);
+    navigate(-1);
   };
 
   const handleDateChangeRaw = (e) => {
@@ -169,25 +172,24 @@ const CreateSalePage = (props) => {
     return tm;
   };
 
-  const EntryForm = () => {
-    return (
-      <Formik initialValues={formData} enableReinitialize={true} onSubmit={handleSave} validationSchema={formSchema}>
-        {({ dirty, values, isValid, errors, touched, handleChange, handleSubmit, handleReset, setFieldValue }) => {
-          return (
-            <Form autoComplete="off">
-              <div className="form-control">
-                <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Photo</div>
-                  <div className="flex flex-col items-left align-middle">
-                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
-                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
-                      <ProgressBar className="p-2" percent={uploadProgress} />
-                      <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
-                    </div>
-                  </div>
+  return (
+    <Formik initialValues={formData} enableReinitialize={true} onSubmit={handleSave} validationSchema={formSchema}>
+      {({ dirty, values, isValid, errors, touched, handleChange, handleSubmit, handleReset, setFieldValue }) => {
+        return (
+          <Form autoComplete="off">
+            <div className="px-4 text-2xl font-bold">New Sale</div>
+            <div className="form-control">
+              <div className="flex flex-nowrap">
+                <div className="w-96 p-2 m-2 label "></div>
+                <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1 w-full" style={{ height: "200px", width: "200px" }}>
+                  <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
+                  <ProgressBar className="p-2" percent={uploadProgress} />
+                  <span className="text-red-600 self-center text-sm">{touched.picture && errors.picture}</span>
                 </div>
+              </div>
+              <div className="flex flex-row flex-nowrap">
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ဘောင်ချာနံပါတ်</div>
+                  <div className="w-36 p-2 m-2 label">ဘောင်ချာနံပါတ်</div>
                   <div className="p-2 m-2">
                     <Field
                       type="text"
@@ -203,7 +205,7 @@ const CreateSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ဝယ်သူအမည်</div>
+                  <div className="w-36 p-2 m-2 label">ဝယ်သူအမည်</div>
                   <div className="p-2 m-2">
                     <Field
                       type="text"
@@ -218,7 +220,7 @@ const CreateSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">နေရပ်</div>
+                  <div className="w-36 p-2 ml-2 label">နေရပ်</div>
                   <div className="p-2 m-2">
                     <Field
                       type="text"
@@ -232,8 +234,10 @@ const CreateSalePage = (props) => {
                     <ErrorMessage name="address" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
+              </div>
+              <div className="flex flex-row flex-nowrap">
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Phone</div>
+                  <div className="w-36 p-2 m-2 label">Phone</div>
                   <div className="p-2 m-2">
                     <Field
                       type="text"
@@ -248,7 +252,7 @@ const CreateSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ပစ္စည်းအမည်</div>
+                  <div className="w-36 p-2 m-2 label">ပစ္စည်းအမည်</div>
                   <div className="p-2 m-2">
                     <Field
                       type="text"
@@ -263,7 +267,7 @@ const CreateSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">အရေအတွက်</div>
+                  <div className="w-36 p-2 m-2 label">အရေအတွက်</div>
                   <div className="p-2 m-2">
                     <Field
                       type="number"
@@ -277,8 +281,10 @@ const CreateSalePage = (props) => {
                     <ErrorMessage name="qty" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
+              </div>
+              <div className="flex flex-row flex-nowrap">
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">Price</div>
+                  <div className="w-36 p-2 m-2 label">Price</div>
                   <div className="p-2 m-2">
                     <Field
                       type="number"
@@ -296,7 +302,7 @@ const CreateSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ပေးငွေ</div>
+                  <div className="w-36 p-2 m-2 label">ပေးငွေ</div>
                   <div className="p-2 m-2">
                     <Field
                       type="number"
@@ -316,7 +322,7 @@ const CreateSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">ကြွေးကျန်</div>
+                  <div className="w-36 p-2 m-2 label">ကြွေးကျန်</div>
                   <div className="p-2 m-2">
                     <Field
                       type="number"
@@ -331,8 +337,10 @@ const CreateSalePage = (props) => {
                     <ErrorMessage name="total_amount" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
+              </div>
+              <div className="flex flex-row flex-nowrap">
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">နေ့စွဲ</div>
+                  <div className="w-36 p-2 m-2 label">နေ့စွဲ</div>
                   <div className="p-2 m-2">
                     <DatePicker
                       id="sale_date"
@@ -349,7 +357,7 @@ const CreateSalePage = (props) => {
                   </div>
                 </div>
                 <div className="flex flex-nowrap">
-                  <div className="w-48 p-2 m-2 label">နောက်ဆုံးကြွေးဆပ်နေ့စွဲ</div>
+                  <div className="w-36 p-2 m-2 label">နောက်ဆုံးကြွေးဆပ်နေ့စွဲ</div>
                   <div className="p-2 m-2">
                     <DatePicker
                       id="installment_at"
@@ -365,12 +373,13 @@ const CreateSalePage = (props) => {
                     <ErrorMessage name="installment_at" component="span" className="text-sm text-red-500 px-2" />
                   </div>
                 </div>
+
                 <div className="flex flex-nowrap w-auto">
-                  <div className="w-48 p-2 m-2 label">ပစ္စည်းယူ/မယူ</div>
+                  <div className="w-36 p-2 m-2 label">ပစ္စည်းယူ/မယူ</div>
                   <div className="p-2 m-2">
                     <select
                       id="product_status"
-                      className="select select-primary w-full"
+                      className="select select-primary w-48"
                       name="product_status"
                       value={values.product_status}
                       onChange={handleChange}
@@ -382,32 +391,72 @@ const CreateSalePage = (props) => {
                     </select>
                   </div>
                 </div>
-
-                <div className="flex flex-nowrap p-3">
-                  <button aria-label="back" onClick={handleBack} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn">
-                    Back {/* <ArrowBackIcon className="text-yellow-700" fontSize="large" /> */}
-                  </button>
-                  <button type="submit" disabled={!dirty || !isValid} className="mx-1 lg:mx-6  py-3 h-12 w-24 btn btn-primary">
-                    Save
-                  </button>
-                  <button disabled={!dirty} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn btn-primary" onClick={handleReset}>
-                    Clear
-                  </button>
-                </div>
-                <LoadingIndicator loading={loading} color="#000099" />
               </div>
-            </Form>
-          );
-        }}
-      </Formik>
-    );
-  };
-
-  return (
-    <div className="p-2 flex flex-col">
-      <div className="px-4 text-2xl font-bold">New Sale</div>
-      <EntryForm />
-    </div>
+              <div className="flex flex-row flex-nowrap">
+                <div className="flex flex-nowrap">
+                  <div className="w-36 p-2 m-2 label">အဘအမည်</div>
+                  <div className="p-2 m-2">
+                    <Field
+                      type="text"
+                      id="father_name"
+                      name="father_name"
+                      placeholder="father_name"
+                      value={values.father_name}
+                      onChange={handleChange}
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="father_name" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-36 p-2 m-2 label">ကိုယ်စားလှယ်</div>
+                  <div className="p-2 m-2">
+                    <Field
+                      type="text"
+                      id="referral"
+                      name="referral"
+                      placeholder="referral"
+                      value={values.referral}
+                      onChange={handleChange}
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="referral" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+                <div className="flex flex-nowrap">
+                  <div className="w-36 p-2 m-2 label">Phone</div>
+                  <div className="p-2 m-2">
+                    <Field
+                      type="text"
+                      id="referral_phone"
+                      name="referral_phone"
+                      placeholder="referral_phone"
+                      value={values.referral_phone}
+                      onChange={handleChange}
+                      className="input input-primary input-md"
+                    />
+                    <ErrorMessage name="referral_phone" component="span" className="text-sm text-red-500 px-2" />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-nowrap">
+                <div className="w-80 p-2 m-2 mb-10 label"></div>
+                <button aria-label="back" onClick={handleBack} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn">
+                  Back {/* <ArrowBackIcon className="text-yellow-700" fontSize="large" /> */}
+                </button>
+                <button type="submit" disabled={!dirty || !isValid} className="mx-1 lg:mx-6  py-3 h-12 w-24 btn btn-primary">
+                  Save
+                </button>
+                <button disabled={!dirty} className="mx-1 lg:mx-6 py-3 h-12 w-24 btn btn-primary" onClick={handleReset}>
+                  Clear
+                </button>
+              </div>
+              <LoadingIndicator loading={loading} color="#000099" />
+            </div>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 };
 

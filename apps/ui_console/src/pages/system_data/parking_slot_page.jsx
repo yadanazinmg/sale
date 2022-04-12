@@ -24,24 +24,10 @@ const GatePage = (props) => {
     fetchPolicy: "no-cache",
     variables: {
       where: {
-        OR: [
-          {
-            code: {
-              equals: "MotorcycleParkingSlot",
-            },
-          },
-          {
-            code: {
-              equals: "CarParkingSlot",
-            },
-          },
-        ],
-      },
-      orderBy: [
-        {
-          code: "asc",
+        code: {
+          equals: "ThankYouCode",
         },
-      ],
+      },
     },
   });
 
@@ -113,7 +99,7 @@ const GatePage = (props) => {
   const columnDefs = useMemo(
     () => [
       { field: "code" },
-      { field: "value" },
+      { field: "value", width: 500 },
       { headerName: "Actions", width: 150, autoHeight: true, field: "id", cellRendererFramework: rowActionsRenderer },
     ],
     []
@@ -131,7 +117,8 @@ const GatePage = (props) => {
     setLoading(gqlLoading);
     console.log(gates);
     if (!gqlLoading && gates) {
-      setParkingSlot(gates.findManySystemData);
+      let tmp = gates.findManySystemData.filter((e) => e.code == "ThankYouCode");
+      setParkingSlot(tmp);
     }
   }, [gqlLoading]);
 
@@ -147,7 +134,7 @@ const GatePage = (props) => {
   return (
     <div className="relative flex flex-col h-full">
       <div className="w-full flex flex-row px-6 py-0 lg:hidden place-content-center">
-        <span className="text-3xl font-semibold capitalize ">Parking Slots</span>
+        <span className="text-3xl font-semibold capitalize ">Thank You</span>
       </div>
       <div className="w-full grid grid-cols-3 px-4 py-2 justify-between">
         <div className="flex flex-row">
@@ -160,7 +147,7 @@ const GatePage = (props) => {
           </div>
         </div>
         <div className="px-6 py-2 hidden lg:flex place-content-center">
-          <span className="pt-2 px-2 text-3xl font-semibold capitalize ">Parking Slots</span>
+          <span className="pt-2 px-2 text-3xl font-semibold capitalize ">Thank You</span>
         </div>
         <div className="">&nbsp;</div>
       </div>

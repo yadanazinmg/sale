@@ -13,14 +13,17 @@ import paths from "../../routes/paths";
 import withUser from "../../hocs/with_user";
 import { get_parking_record_by_Time } from "../../graphql/parking_record";
 import { dateFormatter } from "../../helpers/ag_grid_helpers";
-import { DetailsExcelExport, OperatorExcelExport } from "../../helpers/excel_helper";
+import { DetailsExcelExport } from "../../helpers/excel_helper";
+import { get_exit_gate } from "../../graphql/gate";
+import { get_users } from "../../graphql/user";
+import { get_sales, get_sale_by_data } from "../../graphql/sale";
 
 // const dateFormatter = (params) => {
 //   return moment(params.value).format("DD/MM/YYYY");
 // };
 
-const OperatorReportPage = (props) => {
-  const [getTicketRecord, { loading: gqlLoading, data: ticketrecord }] = useLazyQuery(get_parking_record_by_Time, {
+const SpecialCustomerReportPage = (props) => {
+  const [getTicketRecord, { loading: gqlLoading, data: ticketrecord }] = useLazyQuery(get_sale_by_data, {
     fetchPolicy: "network-only",
   });
 
@@ -32,25 +35,69 @@ const OperatorReportPage = (props) => {
   const [count, setCount] = useState(0);
   const [totalprice, setTotalPrice] = useState(0);
   const [vehicleid, setVehicleId] = useState();
+  const [vehicleclass, SetVehicleClass] = useState();
+  const [parkingtype, SetParkingType] = useState("0");
+  const [selectuser, setSelectUser] = useState();
+  const [user, setUser] = useState();
   let [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleGet = () => {
+    const startdate = moment();
+    const enddate = moment();
     setParkingRecord([]);
-    getTicketRecord({
-      variables: {
-        where: {
-          AND: [
-            {
-              exit_time: {
-                gte: sdate,
-                lte: edate,
+    if (vehicleclass === "1") {
+      console.log("In parking 2");
+      getTicketRecord({
+        variables: {
+          where: {
+            AND: [
+              {
+                customer_type: {
+                  equals: 1,
+                },
+                total_amount: {
+                  equals: 0,
+                },
               },
-            },
-          ],
+            ],
+          },
         },
-      },
-    });
+      });
+    } else if (vehicleclass === "0") {
+      console.log("In parking 1");
+      getTicketRecord({
+        variables: {
+          where: {
+            AND: [
+              {
+                customer_type: {
+                  equals: 1,
+                },
+                total_amount: {
+                  gt: 0,
+                },
+              },
+            ],
+          },
+        },
+      });
+    } else {
+      console.log("In parking 1");
+      getTicketRecord({
+        variables: {
+          where: {
+            AND: [
+              {
+                customer_type: {
+                  equals: 1,
+                },
+              },
+            ],
+          },
+        },
+      });
+    }
   };
 
   const handleVehicleId = (e) => {
@@ -68,12 +115,10 @@ const OperatorReportPage = (props) => {
 
   const columnDefs = useMemo(
     () => [
-      { field: "operator" },
-      { field: "count" },
-      { field: "amount" },
-      // { field: "shift_id" },
-      // { field: "collected_amount" },
-      // { field: "slip_number" },
+      { headerName: "ဝယ်သူအမည်", field: "name", width: 130 },
+      { headerName: "နေရပ်", field: "address", width: 130 },
+      { headerName: "Phone", field: "phone", width: 100 },
+      { headerName: "ကြွေးကျန်", field: "amount", width: 130 },
       // { field: "Doses", cellStyle: { textAlign: "center" }, width: 100, cellRendererFramework: doseLinkRenderer },
     ],
     []
@@ -97,100 +142,69 @@ const OperatorReportPage = (props) => {
   };
 
   const handleExport = () => {
-    OperatorExcelExport(parkingrecord, sdate, edate);
+    DetailsExcelExport(parkingrecord, count, totalprice);
   };
 
   useEffect(async () => {
     setLoading(gqlLoading);
-    console.log(ticketrecord);
     if (!gqlLoading && ticketrecord) {
-      console.log(ticketrecord.parkingRecords);
-      const tmp = ticketrecord.parkingRecords;
+      console.log(ticketrecord.saleRecords);
+      const tmp = ticketrecord.saleRecords;
       console.log(tmp);
-      if (tmp) {
-        let i = 0;
-        const reducer = (map, d) => {
-          let user = d.casher.name;
-          console.log(user);
-          if (map[user]) {
-            let a = map[user];
-            a.operator = user;
-            a.count += 1;
-            a.amount += d.collected_amount ? d.collected_amount : 0;
-            // a[i] = d;
-            i++;
-          } else {
-            map[user] = {
-              operator: user,
-              count: 1,
-              amount: d.collected_amount ? d.collected_amount : 0,
-              // 9000001: d,
-            };
-          }
-          return map;
-        };
+      let total = tmp.reduce((a, c) => a + c.total_amount, 0);
 
-        const obj = tmp.reduce(reducer, []);
-        const result = Object.values(obj);
-
-        let countsum = 0;
-        let amountsum = 0;
-        for (var j = 0; j < result.length; j++) {
-          countsum += result[j].count;
-          if (result[j].amount) amountsum += result[j].amount;
+      let i = 0;
+      const reducer = (map, d) => {
+        console.log(d);
+        let user = d.customer_id;
+        console.log(user);
+        if (map[user]) {
+          let a = map[user];
+          a.cid = user;
+          a.count += 1;
+          a.name = d.customer;
+          a.address = d.address;
+          a.phone = d.phone;
+          a.amount += d.total_amount ? d.total_amount : 0;
+          // a[i] = d;
+          i++;
+        } else {
+          map[user] = {
+            cid: user,
+            name: d.customer,
+            count: 1,
+            address: d.address,
+            phone: d.phone,
+            amount: d.total_amount ? d.total_amount : 0,
+            // 9000001: d,
+          };
         }
-        setTotalPrice(amountsum);
-        setCount(countsum);
-        result.push({
-          operator: "Total",
-          count: countsum,
-          amount: amountsum,
-        });
+        return map;
+      };
+      const obj = tmp.reduce(reducer, []);
+      const result = Object.values(obj);
+      console.log(result);
 
-        console.log(obj);
-        console.log(result);
-        setParkingRecord(result);
-      }
+      setTotalPrice(total);
+      setParkingRecord(result);
+      setCount(result.length);
     }
   }, [gqlLoading]);
 
   return (
     <div className="relative flex flex-col h-full">
       <div className="w-full flex flex-row py-1 place-content-center">
-        <span className="text-3xl font-semibold capitalize mb-2">Operators Report</span>
+        <span className="text-3xl font-semibold capitalize mb-2">Special Customer Report</span>
       </div>
       <div className="w-full flex flex-wrap p-1 pb-2">
         <div className="flex flex-wrap">
           <div className="flex flex-nowrap mt-2">
-            <DatePicker
-              id="Time"
-              name="Time"
-              placeholderText="From Time"
-              selected={sdate}
-              maxDate={new Date()}
-              showTimeSelect
-              timeFormat="HH:mm"
-              onChange={(date) => setsDate(date)}
-              autoComplete="off"
-              dateFormat="dd/MM/yyyy HH:mm"
-              enableCellTextSelection={true}
-              className="input input-primary input-sm px-2 w-36"
-            />
-          </div>
-          <div className="flex flex-nowrap mx-2 mt-2">
-            <DatePicker
-              id="Time"
-              name="Time2"
-              placeholderText="To Time"
-              selected={edate}
-              maxDate={new Date()}
-              showTimeSelect
-              timeFormat="HH:mm"
-              onChange={(date) => seteDate(date)}
-              autoComplete="off"
-              dateFormat="dd/MM/yyyy HH:mm"
-              className="input input-primary input-sm w-36"
-            />
+            <select id="vehicle_class" className="select select-primary select-sm" onChange={(e) => SetVehicleClass(e.target.value)}>
+              <option value="">All</option>
+              {VehicleClass.map((r) => (
+                <option value={r.value}>{r.label}</option>
+              ))}
+            </select>
           </div>
           <div className="flex flex-nowrap mx-2 mt-2">
             <button onClick={handleGet} className="p-2 w-20 btn btn-accent btn-sm">
@@ -203,8 +217,8 @@ const OperatorReportPage = (props) => {
             </button>
           </div>
           <div className="flex flex-nowrap mx-2 mt-2">
-            <span className="pt-0 px-2 text-lg font-semibold w-48">Total Count: {count}</span>
-            <span className="pt-0 px-2 text-lg font-semibold w-48">Total Amount: {totalprice}</span>
+            <span className="pt-0 px-2 text-lg font-semibold w-auto">Count: {count}</span>
+            <span className="pt-0 px-2 text-lg font-semibold w-auto">Total Amount: {totalprice}</span>
           </div>
         </div>
       </div>
@@ -220,6 +234,7 @@ const OperatorReportPage = (props) => {
           rowSelection="single"
           suppressRowClickSelection="true"
           rowData={parkingrecord}
+          enableCellTextSelection={true}
           // isExternalFilterPresent={isExternalFilterPresent}
           // doesExternalFilterPass={doesExternalFilterPass}
           onGridReady={onGridReady}
@@ -230,4 +245,9 @@ const OperatorReportPage = (props) => {
   );
 };
 
-export default withUser(OperatorReportPage);
+const VehicleClass = [
+  { label: "ကြွေးကျန်", value: "0" },
+  { label: "ကြွေးမကျန်", value: "1" },
+];
+
+export default withUser(SpecialCustomerReportPage);

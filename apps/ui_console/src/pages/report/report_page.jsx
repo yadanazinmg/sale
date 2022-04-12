@@ -55,11 +55,12 @@ const ReportPage = (props) => {
               Installment Report
             </button>
           </div>
-          {/* <div>
+          <div>
             <button onClick={handleOperatorReport} className="m-4 p-2 h-20 w-48 btn btn-primary">
-              Parking Records by Gate Operators
+              Special Customer Report
             </button>
           </div>
+          {/*
           <div>
             <button onClick={handleShiftReport} className="m-4 p-2 h-20 w-48 btn btn-primary">
               Parking Records by Shifts
