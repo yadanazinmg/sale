@@ -3,6 +3,13 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { durationCalculator, dateFormatterExcel } from "../helpers/date_helpers";
 
+const getPriceFormat = (value) => {
+  let dollarUSLocale = Intl.NumberFormat("en-US");
+  let dl = dollarUSLocale.format(value);
+  console.log(dl);
+  return dl;
+};
+
 export const DetailsExcelExport = async (parkingrecord, count, totalprice) => {
   console.log("in excel");
   try {
@@ -10,7 +17,7 @@ export const DetailsExcelExport = async (parkingrecord, count, totalprice) => {
     console.log("In excel");
     console.log(data);
     const dateStr = moment().format("YYYYMMDD_hhmmss");
-    const filename = `detail_report_${dateStr}`;
+    const filename = `report_${dateStr}`;
     const workbook = new ExcelJS.Workbook();
     workbook.creator = "IV";
     workbook.created = new Date();
@@ -33,7 +40,59 @@ export const DetailsExcelExport = async (parkingrecord, count, totalprice) => {
       rowValues[1] = pr.name;
       rowValues[2] = pr.address;
       rowValues[3] = pr.phone;
-      rowValues[4] = pr.amount;
+      rowValues[4] = getPriceFormat(pr.amount);
+      sheet.addRow(rowValues);
+    });
+
+    sheet.getCell("A2").numFmt = "dd/mm/yyyy";
+    console.log(workbook);
+    const buffer = await workbook.xlsx.writeBuffer();
+    console.log(buffer);
+    const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    const fileExtension = ".xlsx";
+
+    const blob = new Blob([buffer], { type: fileType });
+    saveAs(blob, filename + fileExtension);
+  } catch {}
+};
+
+export const ExcelExport = async (parkingrecord, count, totalprice) => {
+  console.log("in excel");
+  try {
+    const data = parkingrecord;
+    console.log("In excel");
+    console.log(data);
+    const dateStr = moment().format("YYYYMMDD_hhmmss");
+    const filename = `detail_report_${dateStr}`;
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = "IV";
+    workbook.created = new Date();
+    workbook.modified = new Date();
+    workbook.properties.date1904 = true;
+    const sheet = workbook.addWorksheet("Detail");
+    sheet.addRow(["Date", "Total Count", "Total Amount"]);
+    sheet.addRow([new Date(), count, totalprice]);
+    sheet.addRow();
+
+    const rowValues = [];
+    rowValues[1] = "ဘောင်ချာနံပါတ်";
+    rowValues[2] = "နေ့စွဲ";
+    rowValues[3] = "ဝယ်သူအမည်";
+    rowValues[4] = "နေရပ်";
+    rowValues[5] = "Phone";
+    rowValues[6] = "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ";
+    rowValues[7] = "ကြွေးကျန်";
+    sheet.addRow(rowValues);
+
+    data.forEach((pr) => {
+      const rowValues = [];
+      rowValues[1] = pr.voucher_no;
+      rowValues[2] = dateFormatterExcel(pr.sale_date);
+      rowValues[3] = pr.customer;
+      rowValues[4] = pr.address;
+      rowValues[5] = pr.phone;
+      rowValues[6] = dateFormatterExcel(pr.installment_at);
+      rowValues[7] = getPriceFormat(pr.total_amount);
       sheet.addRow(rowValues);
     });
 
@@ -75,7 +134,7 @@ export const ShiftExcelExport = async (parkingrecord, from, to) => {
       const rowValues = [];
       rowValues[1] = pr.shift;
       rowValues[2] = parseInt(pr.count);
-      rowValues[3] = parseFloat(pr.amount);
+      rowValues[3] = getPriceFormat(parseFloat(pr.amount));
       sheet.addRow(rowValues);
     });
     sheet.getCell("A2").numFmt = "dd/mm/yyyy";

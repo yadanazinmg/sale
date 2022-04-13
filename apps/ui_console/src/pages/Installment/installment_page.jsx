@@ -87,6 +87,14 @@ const InstallmentPage = (props) => {
     gridApi.setQuickFilter(e.target.value);
     //
   };
+
+  const getPriceFormat = (params) => {
+    let dollarUSLocale = Intl.NumberFormat("en-US");
+    let dl = dollarUSLocale.format(params.data.total_amount);
+    console.log(dl);
+    return dl;
+  };
+
   const rowActionsRenderer = (params) => {
     return (
       <div className="flex flex-row">
@@ -108,7 +116,7 @@ const InstallmentPage = (props) => {
       { headerName: "နေရပ်", field: "address", width: 130 },
       { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
       { headerName: "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ", field: "installment_at", width: 180, valueFormatter: dateFormatter },
-      { headerName: "ကြွေးကျန်", field: "total_amount", width: 130 },
+      { headerName: "ကြွေးကျန်", field: "total_amount", width: 130, valueFormatter: getPriceFormat },
       { headerName: "Actions", width: 150, autoHeight: true, cellRendererFramework: rowActionsRenderer },
     ],
     []
@@ -120,6 +128,7 @@ const InstallmentPage = (props) => {
     }),
     []
   );
+
   const onGridReady = (params) => {
     setGridApi(params.api);
     setGridColumnApi(params.columnApi);

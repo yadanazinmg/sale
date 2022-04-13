@@ -111,6 +111,13 @@ const SpecialCustomerReportPage = (props) => {
     //
   };
 
+  const getPriceFormat = (params) => {
+    let dollarUSLocale = Intl.NumberFormat("en-US");
+    let dl = dollarUSLocale.format(params.data.amount);
+    console.log(dl);
+    return dl;
+  };
+
   const modules = useMemo(() => [ClientSideRowModelModule], []);
 
   const columnDefs = useMemo(
@@ -118,7 +125,7 @@ const SpecialCustomerReportPage = (props) => {
       { headerName: "ဝယ်သူအမည်", field: "name", width: 130 },
       { headerName: "နေရပ်", field: "address", width: 130 },
       { headerName: "Phone", field: "phone", width: 100 },
-      { headerName: "ကြွေးကျန်", field: "amount", width: 130 },
+      { headerName: "ကြွေးကျန်", field: "amount", width: 130, valueFormatter: getPriceFormat },
       // { field: "Doses", cellStyle: { textAlign: "center" }, width: 100, cellRendererFramework: doseLinkRenderer },
     ],
     []

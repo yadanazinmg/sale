@@ -41,6 +41,26 @@ const EditCustomerPage = (props) => {
   const [sales, setSale] = useState();
 
   const handleSave = async (data) => {
+    const pdata = new FormData();
+    pdata.append("file", data.picture);
+    console.log(pdata);
+    if (data.picture) {
+      data.description = data.picture.name;
+      axios
+        .post("http://192.168.8.197:7000/upload", pdata, {
+          // receive two parameter endpoint url ,form data
+          onUploadProgress: (ProgressEvent) => {
+            // setLoaded((ProgressEvent.loaded / ProgressEvent.total) * 100);
+          },
+        })
+        .then((res) => {
+          // then print response status
+          console.log(res.statusText);
+        })
+        .catch((err) => {
+          //toast.error("upload fail");
+        });
+    }
     const plc = { ...data };
     console.log(plc);
 
@@ -55,6 +75,9 @@ const EditCustomerPage = (props) => {
           },
           Phone: {
             set: plc.Phone,
+          },
+          description: {
+            set: plc.description,
           },
         },
         where: {
@@ -94,6 +117,10 @@ const EditCustomerPage = (props) => {
     if (!gqlLoading && sale) {
       const sp = sale.customer;
       console.log(sp);
+      if (sp.description) {
+        setPictureUrl(`/ui_console/public/${sp.description}`);
+        sp.picture = null;
+      }
       formData = {
         ...sp,
       };
@@ -107,6 +134,15 @@ const EditCustomerPage = (props) => {
           return (
             <Form autoComplete="off">
               <div className="form-control">
+                <div className="flex flex-nowrap">
+                  <div className="w-48 p-2 m-2 label">Photo</div>
+                  <div className="flex flex-col items-left align-middle">
+                    <div className="flex flex-col px-4 mt-8 mx-4 h-56 items-cente p-1 m-1" style={{ height: "200px", width: "200px" }}>
+                      <PicturePicker url={pictureUrl} onChange={(file) => setFieldValue("picture", file)} value={values.picture} />
+                      <ProgressBar className="p-2" percent={uploadProgress} />
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-nowrap">
                   <div className="w-48 p-2 m-2 label">ဝယ်သူအမည်</div>
                   <div className="p-2 m-2">

@@ -41,7 +41,7 @@ const VaccinationRecord = (props) => {
         <PatientInfo id={id} />
       </div> */}
       <VaccinationRecordTable id={id} />
-      <p className="text-center mt-4">{thank}</p>
+      <p className="text-center text-lg mt-24">{thank}</p>
     </div>
   );
 };

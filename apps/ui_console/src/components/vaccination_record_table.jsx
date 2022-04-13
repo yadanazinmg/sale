@@ -144,10 +144,10 @@ const VaccinationRecordTable = (props) => {
       </div> */}
       {sales && (
         <>
-          <div className=" flex flex-col">
-            <div className=" flex flex-row border-l-2 border-gray-500">
+          <div className="flex flex-col text-lg">
+            <div className="flex flex-row border-l-2 border-gray-500">
               <div className="flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className=" w-40 border-gray-500 text-sm font-bold border-r-2">အမည်</span>
+                <span className=" w-40 border-gray-500 text-lg font-bold border-r-2">အမည်</span>
                 <span className=" w-60 border-gray-500">{sales.customer}</span>
               </div>
               <div className="flex flex-row text-center  border-gray-500  bg-opacity-80">
@@ -155,14 +155,14 @@ const VaccinationRecordTable = (props) => {
                 <span className="w-36 border-gray-500  border-r-2"></span>
               </div>
 
-              <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">နေ့စွဲ </span>
+              <div className="flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
+                <span className="h-7 w-44 border-gray-500 text-lg font-bold border-r-2">နေ့စွဲ </span>
                 <span className="mr-2 w-60 border-gray-500">{getDateString(sales.updated_at)}</span>
               </div>
             </div>
             <div className=" flex flex-row border-l-2 border-gray-500">
               <div className="flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className=" w-40 border-gray-500 text-sm font-bold border-r-2">နေရပ်</span>
+                <span className=" w-40 border-gray-500 text-lg font-bold border-r-2">နေရပ်</span>
                 <span className=" w-60 border-gray-500">{sales.address}</span>
               </div>
               <div className="flex flex-row text-center  border-gray-500  bg-opacity-80">
@@ -171,13 +171,13 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">ဘောင်ချာနံပါတ် </span>
+                <span className="h-7 w-44 border-gray-500 text-lg font-bold border-r-2">ဘောင်ချာနံပါတ် </span>
                 <span className="mr-2 w-60 border-gray-500">{sales.voucher_no} </span>
               </div>
             </div>
             <div className=" flex flex-row border-l-2 border-gray-500">
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="w-40 border-gray-500 text-sm font-bold border-r-2">ဖုန်းနံပါတ်</span>
+                <span className="w-40 border-gray-500 text-lg font-bold border-r-2">ဖုန်းနံပါတ်</span>
                 <span className="w-60 border-gray-500">{sales.phone}</span>
               </div>
               <div className="flex flex-row text-center  border-gray-500  bg-opacity-80">
@@ -186,13 +186,13 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">အာမခံကိုယ်စားလှယ် </span>
+                <span className="h-7 w-44 border-gray-500 font-bold border-r-2">အာမခံကိုယ်စားလှယ် </span>
                 <span className="mr-2 w-60 border-gray-500">{sales.referral} </span>
               </div>
             </div>
             <div className="mb-8 flex flex-row border-l-2 border-gray-500">
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="w-40 border-gray-500 text-sm font-bold border-r-2">အဘအမည် </span>
+                <span className="w-40 border-gray-500 text-lg font-bold border-r-2">အဘအမည် </span>
                 <span className=" w-60 border-gray-500">{sales.father_name}</span>
               </div>
               <div className="flex flex-row text-center  border-gray-500  bg-opacity-80">
@@ -201,23 +201,23 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className=" flex flex-row col-span-2 text-center border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="w-44 h-7 border-gray-500 text-sm font-bold border-r-2 ">ဖုန်းနံပါတ် </span>
+                <span className="w-44 h-7 border-gray-500 text-lg font-bold border-r-2 ">ဖုန်းနံပါတ် </span>
                 <span className="mr-2 w-60 border-gray-500">{sales.referral_phone}</span>
               </div>
             </div>
             <div className="flex flex-row border-l-2  border-gray-500">
               <div className="flex flex-row col-span-2 text-center border-b-2  border-t-2 border-r-2 border-gray-500 bg-opacity-80">
-                <span className="h-7 w-40 border-gray-500 text-sm font-bold  border-r-2">S.No </span>
-                <span className="w-60 border-gray-500 text-sm font-bold ">Particular</span>
+                <span className="h-7 w-40 border-gray-500 text-lg font-bold  border-r-2">S.No </span>
+                <span className="w-60 border-gray-500 text-lg font-bold ">Particular</span>
               </div>
               <div className="flex flex-row text-center  border-t-2 border-gray-500 border-b-2  bg-opacity-80">
                 {" "}
-                <span className="w-36 border-gray-500   text-sm font-bold border-r-2">Qty</span>
+                <span className="w-36 border-gray-500   text-lg font-bold border-r-2">Qty</span>
               </div>
 
               <div className=" flex flex-row col-span-2 text-center border-t-2 border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="w-44 border-gray-500 text-sm font-bold border-r-2">Price</span>
-                <span className="mr-2 w-60 text-sm font-bold border-gray-500">Amount</span>
+                <span className="w-44 border-gray-500 text-lg font-bold border-r-2">Price</span>
+                <span className="mr-2 w-60 text-lg font-bold border-gray-500">Amount</span>
               </div>
             </div>
             <div className="flex flex-row border-l-2  border-gray-500">
@@ -249,7 +249,7 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">စုစုပေါင်း </span>
+                <span className="h-7 w-44 border-gray-500 text-lg font-bold border-r-2">စုစုပေါင်း </span>
                 {sales.customer_type == 1 && (
                   <span className="mr-2 w-60 border-gray-500">{getPriceFormat(parseInt(sales.net_amount + parseInt(sales.give_amount)))} </span>
                 )}
@@ -267,7 +267,7 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">အတိုးသင့်ငွေ </span>
+                <span className="h-7 w-44 border-gray-500 text-lg font-bold border-r-2">အတိုးသင့်ငွေ </span>
                 <span className="mr-2 w-60 border-gray-500"> </span>
               </div>
             </div>
@@ -282,15 +282,15 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="h-7 w-44 border-gray-500 text-sm font-bold border-r-2">ပေးငွေ </span>
+                <span className="h-7 w-44 border-gray-500 text-lg font-bold border-r-2">ပေးငွေ </span>
                 <span className="mr-2 w-60 border-gray-500">{getPriceFormat(sales.give_amount)} </span>
               </div>
             </div>
             <div className=" mb-2 flex flex-row border-l-2  border-l-transparent border-gray-500">
               <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
                 <span className=" w-60 border-gray-500"></span>
-                {sales.product_status == "AFTER" && <span className="w-40 border-red-500 border-2 text-sm font-bold rounded-full italic">ကုန်ထုတ်ပေးပြီး</span>}
-                {sales.product_status == "BEFORE" && <span className="w-40 border-red-500 border-2 text-sm font-bold rounded-full italic">ကုန်မထုတ်ရသေး</span>}
+                {sales.product_status == "AFTER" && <span className="w-40 border-red-500 border-2 text-lg font-bold rounded-full italic">ကုန်ထုတ်ပေးပြီး</span>}
+                {sales.product_status == "BEFORE" && <span className="w-40 border-red-500 border-2 text-lg font-bold rounded-full italic">ကုန်မထုတ်ရသေး</span>}
               </div>
               <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
                 {" "}
@@ -298,7 +298,7 @@ const VaccinationRecordTable = (props) => {
               </div>
 
               <div className="flex flex-row col-span-2 text-center border-l-2  border-b-2  border-r-2 border-gray-500 bg-opacity-80">
-                <span className="w-44 border-gray-500 text-sm font-bold border-r-2">ကျန်ငွေ </span>
+                <span className="w-44 border-gray-500 text-lg font-bold border-r-2">ကျန်ငွေ </span>
                 <span className="mr-2 w-60 border-gray-500">{getPriceFormat(sales.total_amount)} </span>
               </div>
             </div>
@@ -306,19 +306,19 @@ const VaccinationRecordTable = (props) => {
               <div className="flex flex-col items-start border-r-0">
                 <div className="flex flex-row border-gray-500 bg-opacity-80">
                   <span className="h-7 w-7 mr-2"> </span>{" "}
-                  <span className="w-max text-sm font-bold">
+                  <span className="w-max text-lg font-bold">
                     ကျန်ငွေ ({sales.total_amount}) ကျပ်တိတိအား ({getDateString(sales.installment_at)}) နေ့တွင်ပေးဆပ်ရမည်။{" "}
                   </span>{" "}
                 </div>
                 <div className=" mr-6 flex flex-row text-center  border-gray-500  bg-opacity-80">
                   <span className=" w-64 mr-4"> </span> <span className="pb-1 w-max"> </span>{" "}
-                  <span className="h-7 w-max border-transparent text-sm font-bold">ကြွေးဆပ်ရက်လုံးဝမကျော်ရ။ </span>
+                  <span className="h-7 w-max border-transparent text-lg font-bold">ကြွေးဆပ်ရက်လုံးဝမကျော်ရ။ </span>
                 </div>
               </div>
             )}
-            <div className=" mt-12 flex flex-row  border-l-transparent ">
+            <div className=" mt-24 flex flex-row  border-l-transparent ">
               <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
-                <span className=" w-96 text-sm rounded-full">ရောင်းသူလက်မှတ်_ _ _ _ _ _ _ _ _ _ _ _</span>
+                <span className=" w-96 text-lg rounded-full">ရောင်းသူလက်မှတ်_ _ _ _ _ _ _ _ _ _ _ _</span>
               </div>
               <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
                 {" "}
@@ -328,7 +328,7 @@ const VaccinationRecordTable = (props) => {
               <div className="flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
                 <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
                   <span className=" w-16 border-gray-500 "></span>
-                  <span className=" w-80 text-sm rounded-full">ဝယ်သူလက်မှတ်_ _ _ _ _ _ _ _ _ _ _ _</span>
+                  <span className=" w-80 text-lg rounded-full">ဝယ်သူလက်မှတ်_ _ _ _ _ _ _ _ _ _ _ _</span>
                 </div>
                 <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
                   {" "}
@@ -336,9 +336,9 @@ const VaccinationRecordTable = (props) => {
                 </div>
               </div>
             </div>
-            <div className=" mt-4 flex flex-row  border-l-transparent ">
+            <div className="mt-6 flex flex-row  border-l-transparent ">
               <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
-                <span className=" w-96 text-sm rounded-full">ရောင်းသူအမည်_ _ _ _ _ _ _ _ _ _ _ _ _ _</span>
+                <span className=" w-96 text-lg rounded-full">ရောင်းသူအမည်_ _ _ _ _ _ _ _ _ _ _ _ _ _</span>
               </div>
               <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
                 {" "}
@@ -348,7 +348,7 @@ const VaccinationRecordTable = (props) => {
               <div className="flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
                 <div className=" flex flex-row col-span-2 text-center  border-gray-500 bg-opacity-80">
                   <span className=" w-16 border-gray-500 "></span>
-                  <span className="w-80 text-sm rounded-full">ဝယ်သူအမည်_ _ _ _ _ _ _ _ _ _ _ _ _ _</span>
+                  <span className="w-80 text-lg rounded-full">ဝယ်သူအမည်_ _ _ _ _ _ _ _ _ _ _ _ _ _</span>
                 </div>
                 <div className="flex flex-row text-center border-gray-500 bg-opacity-80">
                   {" "}

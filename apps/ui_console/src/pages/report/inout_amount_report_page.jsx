@@ -13,7 +13,7 @@ import paths from "../../routes/paths";
 import withUser from "../../hocs/with_user";
 import { get_parking_record_by_Time } from "../../graphql/parking_record";
 import { dateFormatter } from "../../helpers/ag_grid_helpers";
-import { DetailsExcelExport } from "../../helpers/excel_helper";
+import { DetailsExcelExport, ExcelExport } from "../../helpers/excel_helper";
 import { get_exit_gate } from "../../graphql/gate";
 import { get_users } from "../../graphql/user";
 import { get_sales, get_sale_by_data } from "../../graphql/sale";
@@ -142,6 +142,13 @@ const InstallmentReportPage = (props) => {
     //
   };
 
+  const getPriceFormat = (params) => {
+    let dollarUSLocale = Intl.NumberFormat("en-US");
+    let dl = dollarUSLocale.format(params.data.total_amount);
+    console.log(dl);
+    return dl;
+  };
+
   const modules = useMemo(() => [ClientSideRowModelModule], []);
 
   const columnDefs = useMemo(
@@ -152,7 +159,7 @@ const InstallmentReportPage = (props) => {
       { headerName: "နေရပ်", field: "address", width: 130 },
       { headerName: "ကြွေးဆပ်", field: "give_amount", width: 100 },
       { headerName: "နောက်ဆုံးကြွေးဆပ်နေ့စွဲ", field: "installment_at", width: 180, valueFormatter: dateFormatter },
-      { headerName: "ကြွေးကျန်", field: "total_amount", width: 130 },
+      { headerName: "ကြွေးကျန်", field: "total_amount", width: 130, valueFormatter: getPriceFormat },
       // { field: "Doses", cellStyle: { textAlign: "center" }, width: 100, cellRendererFramework: doseLinkRenderer },
     ],
     []
@@ -176,7 +183,7 @@ const InstallmentReportPage = (props) => {
   };
 
   const handleExport = () => {
-    DetailsExcelExport(parkingrecord, sdate, edate, count, totalprice);
+    ExcelExport(parkingrecord, sdate, edate, count, totalprice);
   };
 
   useEffect(async () => {
